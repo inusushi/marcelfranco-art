@@ -292,6 +292,9 @@ input, textarea, select, button { font: inherit; color: inherit; }
 .card--gr { width: 30rem; height: 74svh; }
 .card--med { width: 24rem; height: 58svh; }
 .card--pq  { width: 17rem; height: 40svh; }
+/* Apaisada, para material que ya viene en horizontal (el banner de clases).
+   Un recorte vertical le cortaría el titular por la mitad. */
+.card--ancha { width: 36rem; height: 26svh; }
 /* En las pequeñas el titular a tamaño h3 se come la tarjeta entera. */
 .card--pq .card__title { font-size: var(--t-h4); }
 .card--pq .card__note { display: none; }
@@ -455,6 +458,7 @@ a.card:hover .card__cta::after { width: 2.6rem; }
   .card--gr { width: 82vw; height: 62svh; }
   .card--med { width: 74vw; height: 52svh; }
   .card--pq { width: 58vw; height: 38svh; }
+  .card--ancha { width: 86vw; height: 20svh; }
   /* En una columna, cerrar de lado a lado se lee como un temblor. */
   [data-cierre] { --cx: 0px !important; }
   .hero__meta { flex-direction: column; align-items: flex-start; gap: var(--pad-small); }
