@@ -15,7 +15,19 @@ python -m http.server 8324 --directory "CLIENTES INU STUDIO WEB/Marcel Franco - 
 | `styles.css` | Paleta y componentes |
 | `app.js` | Motor + **configuración** |
 | `fechas.js` | **Lo único que edita Marcel**: fechas y flyers |
-| `media/` | Fotos en webp, video del hero, poster |
+| `media/` | Fotos en webp, logo, imagen de compartir |
+
+## Publicación
+
+Vive en GitHub Pages: **https://inusushi.github.io/marcelfranco-art/**
+(repo `inusushi/marcelfranco-art`, rama `master`, raíz). Cada `git push`
+republica el sitio en menos de un minuto.
+
+Cuando Marcel compre `marcelfranco.art`, hay que hacer **las dos cosas**, no
+solo una: añadir el dominio en Settings → Pages → Custom domain **y** cambiar
+`og:url`, `og:image` y `twitter:image` en `index.html`, que llevan la URL
+absoluta a mano. Las etiquetas Open Graph no admiten rutas relativas: WhatsApp
+y Facebook no las resuelven y la tarjeta saldría sin imagen.
 
 ## WhatsApp
 
@@ -57,6 +69,16 @@ el número esté activo en WhatsApp solo lo confirma un envío real.
   monitor de 1440 se estira un 11% y en uno de 1920 bastante más. El velo
   oscuro lo disimula, pero si Marcel encuentra esa toma en resolución mayor,
   vale la pena sustituirla: es la primera imagen que ve todo el mundo.
+- **Ni `.reglas li` ni `.plan__lista li` pueden ser `display: grid` o `flex`.**
+  Fue un bug real: en un contenedor grid o flex, cada `<strong>` y cada trozo
+  de texto suelto se vuelve un ítem independiente, y el párrafo se partía en
+  columnas de una palabra por línea. El número y el guion van con
+  `position: absolute` y el `<li>` con `padding-left`.
+- **El logo del nav va recortado en círculo.** El PNG original trae su propio
+  fondo oscuro; en el tema claro un recuadro se vería pegado, un medallón no.
+- **Las notas musicales se enganchan a `pointerdown`, no a `click`.** Casi
+  todos los botones abren WhatsApp en otra pestaña, y con `click` la animación
+  arrancaría cuando el navegador ya cambió de foco.
 - **El burgundy nunca es color de texto sobre carbón** (1.53:1, ilegible).
   Solo superficie. Ver la nota en `styles.css`.
 - **La web no guarda ningún dato personal.** El formulario compone un mensaje

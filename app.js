@@ -161,6 +161,44 @@
   }
 
   /* ============================================================
+     3-bis. NOTAS AL PULSAR UN BOTÓN
+     El equivalente musical de las huellitas de Inu Studio Web.
+     Se engancha en 'pointerdown' y no en 'click' porque casi todos
+     los botones abren WhatsApp en otra pestaña: con 'click' la
+     animación arrancaría cuando el navegador ya cambió de foco.
+     ============================================================ */
+  var NOTAS = ['𝄞', '♪', '♫', '♪', '♬'];  // 𝄞 ♪ ♫ ♪ ♬
+
+  function lanzarNotas(btn) {
+    if (reduce) return;
+    var r = btn.getBoundingClientRect();
+
+    for (var i = 0; i < 4; i++) {
+      (function (i) {
+        setTimeout(function () {
+          var n = document.createElement('span');
+          n.className = 'nota-fly';
+          n.setAttribute('aria-hidden', 'true');
+          n.textContent = NOTAS[Math.floor(Math.random() * NOTAS.length)];
+          n.style.left = (r.left + r.width * (0.25 + Math.random() * 0.6)) + 'px';
+          n.style.top = (r.top + r.height * 0.35) + 'px';
+          n.style.setProperty('--dx', (Math.random() * 44 - 22).toFixed(0) + 'px');
+          n.style.setProperty('--rot', (Math.random() * 44 - 22).toFixed(0) + 'deg');
+          document.body.appendChild(n);
+          setTimeout(function () { n.remove(); }, 1200);
+        }, i * 90);
+      })(i);
+    }
+  }
+
+  function initNotas() {
+    document.addEventListener('pointerdown', function (e) {
+      var btn = e.target.closest && e.target.closest('.btn');
+      if (btn) lanzarNotas(btn);
+    });
+  }
+
+  /* ============================================================
      4. MOTOR VISUAL
      ============================================================ */
   function initLenis() {
@@ -335,6 +373,7 @@
     initWhatsApp();
     initFechas();
     initFormulario();
+    initNotas();
 
     initLenis();
     initSplits();
