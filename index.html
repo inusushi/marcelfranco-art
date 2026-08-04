@@ -55,8 +55,14 @@
 
   <!-- ══════════ HERO ══════════ -->
   <section class="s hero container">
+    <!-- El poster es una <img> real y el video va encima. Las fuentes del
+         video las engancha app.js (initHeroVideo) en vez de ir en el HTML:
+         así, con movimiento reducido, los 3 MB no llegan siquiera a
+         descargarse y se queda la foto. -->
     <div class="hero__media">
-      <img src="media/hero.webp" alt="" width="1280" height="960" fetchpriority="high">
+      <img src="media/hero-poster.webp" alt="" width="1600" height="814" fetchpriority="high">
+      <video class="hero__video" muted loop playsinline aria-hidden="true"
+             data-webm="media/hero.webm" data-mp4="media/hero.mp4"></video>
     </div>
     <div class="hero__veil"></div>
     <div class="hero__grain"></div>

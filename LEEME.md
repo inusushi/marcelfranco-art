@@ -45,8 +45,8 @@ el número esté activo en WhatsApp solo lo confirma un envío real.
 - **PDF del libro** (en corrección de estilo). La sección está en
   "Próximamente"; para activar la venta, cambia el texto del botón y su
   mensaje en `app.js` → `MENSAJES.libro`.
-- **Portada del libro en alta.** Ahora hay una foto de relleno marcada con
-  `TODO` en `index.html`.
+- ~~Portada del libro en alta.~~ **Entregada** (04/08/2026):
+  `media/libro-portada.webp`.
 - **Flyers y fechas reales.** `fechas.js` trae dos de ejemplo — hay que
   borrarlas. Las fechas pasadas desaparecen solas.
 - **Años de la trayectoria.** Solo "Limbo · 2020" está confirmado por él. Las
@@ -60,12 +60,22 @@ el número esté activo en WhatsApp solo lo confirma un envío real.
 - **`.footer` lleva `position: relative`** porque contiene un `.theme-marker`.
   Sin eso, el marcador se ancla al origen del documento y secuestra el tema de
   todo el sitio.
-- **El hero es una foto fija, no video.** Marcel descartó el movimiento. La
-  imagen es `media/hero.webp`, que sale de `hero 2.jpg`. El video y su poster
-  se borraron de `media/` para no cargar 850 KB muertos; el original
-  (`marcel background web M.mp4`) sigue intacto en la carpeta de arriba por si
-  algún día se recupera.
-- **La foto del hero mide 1280×960**, que es lo que dio el original. En un
+- **El hero vuelve a ser video** (04/08/2026), a partir de
+  `Marcel franco hero webM.mp4`. Deroga la decisión anterior de dejarlo en
+  foto fija. Cosas que hay que respetar si se toca:
+  - **Las fuentes las engancha `app.js`, no el HTML.** Con movimiento
+    reducido no se descargan los 3 MB y se queda el poster, que es una
+    `<img>` normal.
+  - **El original traía barras negras incrustadas** (el cuadro real es
+    1920×976 con 52 px de offset). Se recortan al codificar; si se vuelve a
+    exportar sin recortar, salen franjas negras en el hero.
+  - Va **sin audio** a propósito: un hero con sonido no arranca solo en
+    ningún navegador.
+  - El poster sale del **primer fotograma**, no de uno bonito de en medio:
+    si no coincide con el arranque, se ve un salto al entrar el video.
+  - Hubo un primer video (`marcel background web M.mp4`) que se descartó por
+    llevar marca de agua de Pika incrustada. No recuperarlo.
+- **La foto del hero medía 1280×960**, que es lo que dio el original. En un
   monitor de 1440 se estira un 11% y en uno de 1920 bastante más. El velo
   oscuro lo disimula, pero si Marcel encuentra esa toma en resolución mayor,
   vale la pena sustituirla: es la primera imagen que ve todo el mundo.

@@ -224,7 +224,11 @@ input, textarea, select, button { font: inherit; color: inherit; }
 /* ---------- Hero ---------- */
 .hero { min-height: 100svh; display: grid; align-content: end; padding-bottom: var(--pad-large); overflow: hidden; }
 .hero__media { position: absolute; inset: 0; z-index: -2; }
-.hero__media video, .hero__media img { width: 100%; height: 100%; object-fit: cover; }
+.hero__media video, .hero__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* El video aparece por encima del poster cuando ya tiene fotogramas que
+   pintar, para que no se vea un hueco negro mientras carga. */
+.hero__video { opacity: 0; transition: opacity 0.6s var(--ease); }
+.hero__video.is-playing { opacity: 1; }
 /* La foto del hero mide 1280×960: en pantallas grandes se estira.
    El velo oscuro no es solo estética, también disimula el reescalado. */
 .hero__veil {

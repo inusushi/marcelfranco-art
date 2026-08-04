@@ -235,6 +235,32 @@
   }
 
   /* ============================================================
+     3-ter. VIDEO DEL HERO
+     Las fuentes se enganchan aquí y no en el HTML para no descargar
+     los megas si el usuario pidió movimiento reducido: en ese caso
+     se queda el poster, que ya es una <img> normal.
+     ============================================================ */
+  function initHeroVideo() {
+    var v = document.querySelector('.hero__video');
+    if (!v || reduce) return;
+
+    [['data-webm', 'video/webm'], ['data-mp4', 'video/mp4']].forEach(function (par) {
+      var url = v.getAttribute(par[0]);
+      if (!url) return;
+      var s = document.createElement('source');
+      s.src = url; s.type = par[1];
+      v.appendChild(s);
+    });
+
+    /* Solo se muestra cuando de verdad hay imagen que pintar. Si el
+       navegador rechaza el autoplay, el poster se queda y no pasa nada. */
+    v.addEventListener('playing', function () { v.classList.add('is-playing'); });
+    v.load();
+    var p = v.play();
+    if (p && p.catch) p.catch(function () { /* sin autoplay: se queda el poster */ });
+  }
+
+  /* ============================================================
      4. MOTOR VISUAL
      ============================================================ */
   function initLenis() {
@@ -443,6 +469,7 @@
     initFechas();
     initFormulario();
     initNotas();
+    initHeroVideo();
 
     initLenis();
     initSplits();
