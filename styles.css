@@ -295,6 +295,24 @@ input, textarea, select, button { font: inherit; color: inherit; }
 /* En las pequeñas el titular a tamaño h3 se come la tarjeta entera. */
 .card--pq .card__title { font-size: var(--t-h4); }
 .card--pq .card__note { display: none; }
+
+/* Tarjetas que son enlace a YouTube. La llamada a la acción tiene que verse
+   siempre, también en las pequeñas (que ocultan .card__note) y en táctil,
+   donde no existe el hover. */
+a.card { text-decoration: none; color: inherit; }
+a.card:hover { border-color: var(--cobre); }
+a.card:hover .card__img { transform: scale(1.04); }
+.card__img { transition: transform 0.7s var(--ease); }
+.card__cta {
+  margin-top: 0.7rem; font-size: var(--t-eyebrow);
+  text-transform: uppercase; letter-spacing: 0.16em; color: var(--cobre);
+  display: inline-flex; align-items: center; gap: 0.45rem;
+}
+.card__cta::after {
+  content: ""; width: 1.5rem; height: 1px; background: currentColor;
+  transition: width 0.4s var(--ease);
+}
+a.card:hover .card__cta::after { width: 2.6rem; }
 .card__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
 .card::after {
   content: ""; position: absolute; inset: 0; z-index: 1;
