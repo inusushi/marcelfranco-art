@@ -95,7 +95,7 @@
         '• Formato: ' + v('formato') + '\n' +
         (v('notas') !== '—' ? '• Notas: ' + v('notas') + '\n' : '');
 
-      window.open(waLink(texto), '_blank', 'noopener');
+      abrir(waLink(texto), true);
     });
   }
 
@@ -163,38 +163,74 @@
   /* ============================================================
      3-bis. NOTAS AL PULSAR UN BOTÓN
      El equivalente musical de las huellitas de Inu Studio Web.
-     Se engancha en 'pointerdown' y no en 'click' porque casi todos
-     los botones abren WhatsApp en otra pestaña: con 'click' la
-     animación arrancaría cuando el navegador ya cambió de foco.
+     El botón espera ESPERA_NOTAS antes de actuar, para que dé
+     tiempo a ver la animación.
      ============================================================ */
-  var NOTAS = ['𝄞', '♪', '♫', '♪', '♬'];  // 𝄞 ♪ ♫ ♪ ♬
+  var NOTAS = ['𝄞', '♪', '♫', '♪', '♬'];
+  var ESPERA_NOTAS = 1500;
 
   function lanzarNotas(btn) {
-    if (reduce) return;
     var r = btn.getBoundingClientRect();
 
-    for (var i = 0; i < 4; i++) {
+    for (var i = 0; i < 5; i++) {
       (function (i) {
         setTimeout(function () {
           var n = document.createElement('span');
           n.className = 'nota-fly';
           n.setAttribute('aria-hidden', 'true');
           n.textContent = NOTAS[Math.floor(Math.random() * NOTAS.length)];
-          n.style.left = (r.left + r.width * (0.25 + Math.random() * 0.6)) + 'px';
+          n.style.left = (r.left + r.width * (0.2 + Math.random() * 0.65)) + 'px';
           n.style.top = (r.top + r.height * 0.35) + 'px';
-          n.style.setProperty('--dx', (Math.random() * 44 - 22).toFixed(0) + 'px');
+          n.style.setProperty('--dx', (Math.random() * 48 - 24).toFixed(0) + 'px');
           n.style.setProperty('--rot', (Math.random() * 44 - 22).toFixed(0) + 'deg');
           document.body.appendChild(n);
-          setTimeout(function () { n.remove(); }, 1200);
-        }, i * 90);
+          setTimeout(function () { n.remove(); }, 1300);
+        }, i * 110);
       })(i);
     }
   }
 
+  /* Abrir una pestaña 1.5 s después del clic sigue dentro de la ventana de
+     "activación transitoria" de Chrome y Firefox (5 s), así que no lo bloquea
+     el antipopups. Safari sí es capaz de bloquearlo: si window.open devuelve
+     null, se navega en la misma pestaña en lugar de perder el clic. */
+  function abrir(href, nuevaPestana) {
+    if (!nuevaPestana) { location.href = href; return; }
+    var w = window.open(href, '_blank', 'noopener');
+    if (!w) location.href = href;
+  }
+
   function initNotas() {
-    document.addEventListener('pointerdown', function (e) {
+    document.addEventListener('click', function (e) {
       var btn = e.target.closest && e.target.closest('.btn');
-      if (btn) lanzarNotas(btn);
+      if (!btn || btn.dataset.esperando) return;
+
+      /* Sin animación no hay nada que esperar: que el botón actúe ya. */
+      if (reduce) return;
+
+      var esEnlace = btn.tagName === 'A';
+      var href = esEnlace ? btn.getAttribute('href') : null;
+      var form = !esEnlace ? btn.closest('form') : null;
+
+      /* Un enlace sin destino real y un botón fuera de formulario no tienen
+         nada que retrasar: solo se lanzan las notas. */
+      if (!form && (!href || href === '#')) { lanzarNotas(btn); return; }
+
+      /* Un formulario incompleto tiene que avisar YA. Si se retrasara 1.5 s,
+         el usuario vería volar las notas y solo después el "falta un campo". */
+      if (form && !form.checkValidity()) return;
+
+      e.preventDefault();
+      btn.dataset.esperando = '1';
+      btn.setAttribute('aria-busy', 'true');
+      lanzarNotas(btn);
+
+      setTimeout(function () {
+        delete btn.dataset.esperando;
+        btn.removeAttribute('aria-busy');
+        if (form) form.requestSubmit ? form.requestSubmit(btn) : form.submit();
+        else abrir(href, btn.getAttribute('target') === '_blank');
+      }, ESPERA_NOTAS);
     });
   }
 
@@ -309,6 +345,39 @@
     return update;
   }
 
+  /* Las dos columnas de Música entran desde los lados y se cierran en el
+     centro. Va pegado al scroll y no es una animación de duración fija:
+     el usuario "empuja" las mitades con la rueda o con el dedo.
+     Devuelve la función de actualización, que corre en el bucle de rAF. */
+  function initCierre() {
+    var partes = [].slice.call(document.querySelectorAll('[data-cierre]'));
+    if (!partes.length) return function () {};
+
+    var MAX = 18;   // % de desplazamiento en el punto más abierto
+    if (reduce) {
+      partes.forEach(function (el) { el.style.setProperty('--cx', '0px'); });
+      return function () {};
+    }
+
+    return function () {
+      partes.forEach(function (el) {
+        /* El avance se mide sobre el contenedor común, no sobre cada columna:
+           si cada una midiera su propio centro, la más alta cerraría más tarde
+           y las dos mitades no se encontrarían a la vez. */
+        var caja = el.parentNode.getBoundingClientRect();
+
+        /* 0 = el borde superior aún toca el fondo de la pantalla,
+           1 = ese borde ha subido hasta el 40% del alto: ya está cerrado. */
+        var p = (innerHeight - caja.top) / (innerHeight * 0.6);
+        p = Math.min(1, Math.max(0, p));
+        p = 1 - Math.pow(1 - p, 2);   // frena al final en vez de dar un tirón
+
+        var signo = el.getAttribute('data-cierre') === 'izq' ? -1 : 1;
+        el.style.setProperty('--cx', (signo * MAX * (1 - p)).toFixed(2) + '%');
+      });
+    };
+  }
+
   /* Tema por scroll. Al final del documento el scroll se topa, así que un
      marcador de la última pantalla nunca cruzaría la línea del nav: estando
      abajo del todo vale cualquiera que ya esté visible. */
@@ -382,8 +451,9 @@
 
     var updateHoriz = initHorizontal();
     var updateTheme = initTheme();
+    var updateCierre = initCierre();
 
-    function refresh() { if (updateHoriz) updateHoriz(); updateTheme(); }
+    function refresh() { if (updateHoriz) updateHoriz(); updateTheme(); updateCierre(); }
 
     /* No se puede colgar del evento 'scroll': Lenis no emite eventos scroll
        nativos y el pin y los temas se quedarían congelados. */

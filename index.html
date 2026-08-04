@@ -63,7 +63,13 @@
 
     <div class="hero__inner">
       <p class="eyebrow" data-reveal>Cantautor · Compositor · Guitarrista · Productor</p>
-      <h1 class="impact" data-split>Marcel Franco</h1>
+      <!-- El logo va FUERA del <h1>: data-split reescribe el innerHTML del
+           titular para animarlo línea a línea y se llevaría por delante
+           cualquier elemento que estuviera dentro. -->
+      <div class="hero__titulo">
+        <h1 class="impact" data-split>Marcel Franco</h1>
+        <img class="hero__logo" src="media/logo.webp" alt="" width="344" height="344" data-reveal>
+      </div>
 
       <div class="hero__meta">
         <p class="lead" data-reveal>
@@ -124,43 +130,47 @@
         <h2 class="h2">Dos décadas</h2>
       </div>
 
+      <!-- Los tamaños alternan a propósito (--med, --gr, --pq) y cada tarjeta
+           se desplaza en vertical con --y. Es lo que da el aire de mural en
+           lugar de carrusel. Si se añade una tarjeta, sigue la alternancia:
+           nunca dos del mismo tamaño seguidas. -->
       <div class="horiz__track">
-        <article class="card">
+        <article class="card card--med" style="--y: -6%">
           <img class="card__img" src="media/foto-04.webp" alt="" loading="lazy">
           <span class="card__year">Formación</span>
           <h3 class="card__title">Instituto Nacional de Bellas Artes</h3>
           <p class="card__note">La disciplina de la música clásica como punto de partida.</p>
         </article>
 
-        <article class="card">
+        <article class="card card--pq" style="--y: 16%">
           <img class="card__img" src="media/foto-05.webp" alt="" loading="lazy">
           <span class="card__year">Primer proyecto</span>
           <h3 class="card__title">El Cuarto de Dante</h3>
           <p class="card__note">Diez años de banda y un disco de composiciones originales.</p>
         </article>
 
-        <article class="card">
+        <article class="card card--gr" style="--y: -2%">
           <img class="card__img" src="media/foto-06.webp" alt="" loading="lazy">
           <span class="card__year">2020</span>
           <h3 class="card__title">Limbo</h3>
           <p class="card__note">Primer álbum. Una etapa introspectiva y de exploración emocional.</p>
         </article>
 
-        <article class="card">
+        <article class="card card--pq" style="--y: -18%">
           <img class="card__img" src="media/foto-08.webp" alt="" loading="lazy">
           <span class="card__year">Sencillo</span>
           <h3 class="card__title">Amanecer</h3>
           <p class="card__note">Primer sencillo como solista.</p>
         </article>
 
-        <article class="card">
+        <article class="card card--med" style="--y: 12%">
           <img class="card__img" src="media/clases.webp" alt="" loading="lazy">
           <span class="card__year">Hoy</span>
           <h3 class="card__title">Enseñar</h3>
           <p class="card__note">Clases de guitarra para principiantes e intermedios.</p>
         </article>
 
-        <article class="card">
+        <article class="card card--gr" style="--y: -8%">
           <img class="card__img" src="media/foto-09.webp" alt="" loading="lazy">
           <span class="card__year">Próximamente</span>
           <h3 class="card__title">Un viaje por la luz</h3>
@@ -178,8 +188,12 @@
     <p class="eyebrow" data-reveal>Música</p>
     <h2 class="h2" data-split style="margin: 2rem 0 4rem; max-width: 16ch;">Amanecer</h2>
 
-    <div class="split">
-      <div class="stack stack--sm">
+    <!-- Las dos columnas entran desde los lados y se cierran en el centro
+         conforme entra la sección. El desplazamiento lo calcula app.js
+         (initCierre) a partir del scroll, no es una animación de duración
+         fija: así el movimiento va pegado al dedo o a la rueda. -->
+    <div class="split split--cierre">
+      <div class="stack stack--sm" data-cierre="izq">
         <p class="body-lg dim" data-reveal>
           Primer sencillo como solista. Escúchalo aquí o en tu plataforma preferida.
         </p>
@@ -197,7 +211,7 @@
         </div>
       </div>
 
-      <div class="stack stack--sm">
+      <div class="stack stack--sm" data-cierre="der">
         <div class="video-wrap" data-reveal>
           <iframe src="https://www.youtube-nocookie.com/embed/qgDNzkAd-3k"
                   title="Video de Marcel Franco" loading="lazy"

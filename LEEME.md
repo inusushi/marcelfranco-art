@@ -76,9 +76,24 @@ el número esté activo en WhatsApp solo lo confirma un envío real.
   `position: absolute` y el `<li>` con `padding-left`.
 - **El logo del nav va recortado en círculo.** El PNG original trae su propio
   fondo oscuro; en el tema claro un recuadro se vería pegado, un medallón no.
-- **Las notas musicales se enganchan a `pointerdown`, no a `click`.** Casi
-  todos los botones abren WhatsApp en otra pestaña, y con `click` la animación
-  arrancaría cuando el navegador ya cambió de foco.
+- **Los botones esperan 1.5 s antes de actuar** (`ESPERA_NOTAS` en `app.js`),
+  para que dé tiempo a ver las notas. Tres cosas que no hay que deshacer ahí:
+  - Abrir la pestaña con `window.open` a los 1.5 s **sí** funciona: sigue
+    dentro de la ventana de activación transitoria del navegador, que son 5 s.
+    Safari puede bloquearlo igual, y por eso hay un `if (!w) location.href`.
+    Si algún día se sube la espera por encima de 5 s, esto deja de funcionar.
+  - **El formulario se valida ANTES de lanzar las notas.** Si no, el usuario
+    ve volar las notas y 1.5 s después un "te falta un campo".
+  - `data-esperando` bloquea el doble clic durante la espera.
+- **El cierre lateral de Música mide el contenedor, no cada columna.** Si cada
+  mitad midiera su propio centro, la más alta cerraría más tarde y las dos no
+  se encontrarían a la vez. En móvil está desactivado: a una columna, cerrar
+  de lado a lado se lee como un temblor.
+- **Las tarjetas de trayectoria alternan tamaño a propósito** (`--gr`, `--med`,
+  `--pq`) y se desplazan en vertical con `--y`. Es lo que da el aire de mural
+  en vez de carrusel; si se añade una tarjeta, que no queden dos iguales
+  seguidas. El `translateY` va en la tarjeta, nunca en `.horiz__track`, que ya
+  lleva su propio `translate3d` horizontal.
 - **El burgundy nunca es color de texto sobre carbón** (1.53:1, ilegible).
   Solo superficie. Ver la nota en `styles.css`.
 - **La web no guarda ningún dato personal.** El formulario compone un mensaje

@@ -238,6 +238,15 @@ input, textarea, select, button { font: inherit; color: inherit; }
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
 }
 .hero__inner { display: grid; gap: var(--pad-small); }
+.hero__titulo { display: flex; align-items: center; gap: clamp(1rem, 3vw, 2.5rem); flex-wrap: wrap; }
+/* Grande a propósito: es el logo el que tiene que construir marca, no el
+   nombre. Recortado en círculo por el mismo motivo que en el nav. */
+.hero__logo {
+  width: clamp(5rem, 11vw, 9.5rem); height: clamp(5rem, 11vw, 9.5rem);
+  border-radius: 50%; flex: none;
+  border: 1px solid color-mix(in oklab, var(--cobre) 45%, transparent);
+  box-shadow: 0 0 0 8px color-mix(in oklab, var(--carbon) 40%, transparent);
+}
 .hero__meta { display: flex; flex-wrap: wrap; gap: var(--pad-med); align-items: flex-end; justify-content: space-between; }
 .hero__roles { font-size: var(--t-h4); color: var(--marfil); letter-spacing: 0.04em; font-family: var(--ff-display); }
 
@@ -270,11 +279,22 @@ input, textarea, select, button { font: inherit; color: inherit; }
   pointer-events: none; display: grid; gap: 0.75rem;
 }
 .horiz__track { display: flex; gap: var(--gap); padding-inline: max(var(--container), 5vw); will-change: transform; }
+/* Cada tarjeta se centra sobre el eje del carril y de ahí se desplaza con --y,
+   así el desplazamiento es simétrico y ninguna se sale por arriba o por abajo.
+   El translate va en la tarjeta y no en el carril: el carril ya lleva su
+   propio translate3d horizontal y se pisarían. */
 .card {
   flex: none; width: 24rem; height: 60svh; border-radius: var(--r-med);
   background: var(--carbon-2); border: 1px solid var(--line);
   overflow: hidden; position: relative; display: grid; align-content: end; padding: var(--pad-small);
+  align-self: center; transform: translateY(var(--y, 0));
 }
+.card--gr { width: 30rem; height: 74svh; }
+.card--med { width: 24rem; height: 58svh; }
+.card--pq  { width: 17rem; height: 40svh; }
+/* En las pequeñas el titular a tamaño h3 se come la tarjeta entera. */
+.card--pq .card__title { font-size: var(--t-h4); }
+.card--pq .card__note { display: none; }
 .card__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
 .card::after {
   content: ""; position: absolute; inset: 0; z-index: 1;
@@ -299,6 +319,14 @@ input, textarea, select, button { font: inherit; color: inherit; }
 .frame img { width: 100%; height: 100%; object-fit: cover; }
 
 /* ---------- Música ---------- */
+/* Cierre desde los lados. El desplazamiento lo escribe app.js en --cx a
+   partir del scroll; el CSS solo declara la posición de partida por si el
+   JS no llega a correr, y el overflow que evita la barra horizontal. */
+.split--cierre { overflow: hidden; }
+[data-cierre] { transform: translateX(var(--cx, 0)); will-change: transform; }
+[data-cierre="izq"] { --cx: -18%; }
+[data-cierre="der"] { --cx: 18%; }
+
 .player { border-radius: var(--r-med); overflow: hidden; border: 1px solid var(--line); }
 .player iframe { display: block; width: 100%; height: 152px; border: 0; }
 .plats { display: flex; flex-wrap: wrap; gap: 0.6rem; }
@@ -403,7 +431,14 @@ input, textarea, select, button { font: inherit; color: inherit; }
     --pad-xl: 4.5rem; --pad-large: 3rem; --pad-med: 2rem;
   }
   .split, .split--wide, .planes, .form__grid, .footer__grid { grid-template-columns: 1fr; }
-  .card { width: 76vw; height: 54svh; }
+  /* En móvil el mural se aplana: el desplazamiento vertical se reduce a la
+     mitad y las anchuras se recalculan en vw, porque 30rem no cabe. */
+  .card { width: 76vw; height: 54svh; transform: translateY(calc(var(--y, 0) / 2)); }
+  .card--gr { width: 82vw; height: 62svh; }
+  .card--med { width: 74vw; height: 52svh; }
+  .card--pq { width: 58vw; height: 38svh; }
+  /* En una columna, cerrar de lado a lado se lee como un temblor. */
+  [data-cierre] { --cx: 0px !important; }
   .hero__meta { flex-direction: column; align-items: flex-start; gap: var(--pad-small); }
   .nav__links { display: none; }
   .horiz__head { top: 12%; }
@@ -437,4 +472,6 @@ input, textarea, select, button { font: inherit; color: inherit; }
   .horiz__sticky { position: static; height: auto; }
   .horiz__track { overflow-x: auto; transform: none !important; }
   .nota-fly { display: none; }
+  .card { transform: none !important; }
+  [data-cierre] { transform: none !important; }
 }
