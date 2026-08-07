@@ -17,7 +17,13 @@
       online: '$1,000 MXN al mes',
       presencial: '$3,200 MXN al mes',
       libro: '$250 MXN'
-    }
+    },
+
+    /* Clave del libro. El PDF de media/ está cifrado con AES-256 usando esta
+       misma clave, así que cambiarla aquí NO basta: hay que volver a cifrar
+       el PDF con la nueva. Ver LEEME → "El libro va cifrado". */
+    claveLibro: '2345',
+    libroArchivo: 'media/un-viaje-por-la-luz.pdf'
   };
 
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -43,8 +49,16 @@
       'Me gustaría empezar la semana del: ',
 
     'libro':
-      'Hola Marcel 👋 Quiero que me avises cuando salga tu libro "Un viaje por la luz" (' + CONFIG.precios.libro + ').\n\n' +
+      'Hola Marcel 👋 Quiero comprar tu libro "Un viaje por la luz" (' + CONFIG.precios.libro + ').\n\n' +
       'Mi nombre es: ',
+
+    'composicion':
+      'Hola Marcel 👋 Quiero encargarte una canción.\n\n' +
+      'Mi nombre es: \n' +
+      'Tipo de composición (Simple $1,500 / Mejorada $2,200 / Artística $3,000): \n' +
+      'De qué quiero que hable: \n' +
+      'Canción de referencia: \n' +
+      '¿Tengo la letra? (completa / una idea / ninguna): ',
 
     'contacto':
       'Hola Marcel 👋 Te escribo desde tu página web.\n\n'
@@ -161,6 +175,48 @@
   }
 
   /* ============================================================
+     2-bis. DESBLOQUEO DEL LIBRO
+     Esto es comodidad, NO seguridad: el PDF de media/ va cifrado
+     con AES-256 y esa misma clave, así que quien encuentre la URL
+     del archivo se topa igual con la contraseña al abrirlo. Si se
+     cambia CONFIG.claveLibro hay que volver a cifrar el PDF.
+     ============================================================ */
+  function initLibro() {
+    var form = document.querySelector('#form-libro');
+    if (!form) return;
+    var campo = form.querySelector('input');
+    var msg = document.querySelector('#unlock-msg');
+    var caja = form.closest('.unlock');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      if (campo.value.trim() !== CONFIG.claveLibro) {
+        caja.classList.remove('is-open');
+        caja.classList.add('is-wrong');
+        msg.textContent = 'Ese código no es. Revísalo en el mensaje de Marcel.';
+        setTimeout(function () { caja.classList.remove('is-wrong'); }, 600);
+        campo.select();
+        return;
+      }
+
+      caja.classList.add('is-open');
+      msg.textContent = 'Listo. Al abrir el archivo te pedirá el mismo código.';
+
+      if (!caja.querySelector('.unlock__descarga')) {
+        var a = document.createElement('a');
+        a.className = 'btn btn--cobre unlock__descarga';
+        a.href = CONFIG.libroArchivo;
+        a.setAttribute('download', 'Un viaje por la luz — Marcel Franco.pdf');
+        a.innerHTML = '<span class="btn__swap"><span>Descargar el PDF</span>' +
+                      '<span aria-hidden="true">Descargar el PDF</span></span>';
+        msg.parentNode.insertBefore(a, msg.nextSibling);
+        a.focus();
+      }
+    });
+  }
+
+  /* ============================================================
      3-bis. NOTAS AL PULSAR UN BOTÓN
      El equivalente musical de las huellitas de Inu Studio Web.
      El botón espera ESPERA_NOTAS antes de actuar, para que dé
@@ -212,9 +268,15 @@
       var href = esEnlace ? btn.getAttribute('href') : null;
       var form = !esEnlace ? btn.closest('form') : null;
 
-      /* Un enlace sin destino real y un botón fuera de formulario no tienen
-         nada que retrasar: solo se lanzan las notas. */
-      if (!form && (!href || href === '#')) { lanzarNotas(btn); return; }
+      /* Estos no se tocan, solo se lanzan las notas:
+         - enlace sin destino real, o botón suelto fuera de formulario;
+         - enlace de descarga: reenviarlo a mano perdería el atributo
+           download y el PDF se abriría en el navegador en vez de bajarse;
+         - ancla interna: retrasar un salto dentro de la misma página se
+           siente como que el clic no ha funcionado. */
+      if ((!form && (!href || href === '#')) ||
+          btn.hasAttribute('download') ||
+          (href && href.charAt(0) === '#')) { lanzarNotas(btn); return; }
 
       /* Un formulario incompleto tiene que avisar YA. Si se retrasara 1.5 s,
          el usuario vería volar las notas y solo después el "falta un campo". */
@@ -351,23 +413,78 @@
         var sticky = section.querySelector('.horiz__sticky');
         var track = section.querySelector('.horiz__track');
         if (!sticky || !track) return;
-        var travel = Math.max(0, track.scrollWidth - innerWidth);
+        /* clientWidth y no innerWidth: innerWidth incluye la barra de scroll,
+           pero el carril se maqueta sin ella. Con innerWidth el recorrido
+           salía ~15 px corto y la última tarjeta nunca acababa de entrar. */
+        var travel = Math.max(0, track.scrollWidth - document.documentElement.clientWidth);
         section.style.height = (innerHeight + travel) + 'px';
-        instances.push({ section: section, track: track, bar: section.querySelector('.horiz__progress i'), travel: travel });
+        instances.push({
+          section: section, track: track,
+          bar: section.querySelector('.horiz__progress i'),
+          travel: travel, anchoMedido: track.scrollWidth,
+          cards: [].slice.call(track.querySelectorAll('[data-z]')),
+          fondo: [].slice.call(section.querySelectorAll('[data-parallax]'))
+        });
       });
     }
 
     function update() {
+      /* Red de seguridad: si el ancho real del carril ya no es el que se midió,
+         la altura de la sección está mal y el pin iría descompasado. Un
+         ResizeObserver sobre el carril no vale para esto, porque vigila su
+         caja, no su scrollWidth, y la caja no cambia al recomponerse dentro. */
+      for (var i = 0; i < instances.length; i++) {
+        if (instances[i].track.scrollWidth !== instances[i].anchoMedido) { measure(); break; }
+      }
+
       instances.forEach(function (o) {
         var rect = o.section.getBoundingClientRect();
         var p = o.travel === 0 ? 0 : Math.min(1, Math.max(0, -rect.top / o.travel));
-        o.track.style.transform = 'translate3d(' + (-p * o.travel) + 'px,0,0)';
+        var desliz = -p * o.travel;
+
+        o.track.style.transform = 'translate3d(' + desliz + 'px,0,0)';
         if (o.bar) o.bar.style.width = (p * 100) + '%';
+
+        /* Profundidad. Cada tarjeta se adelanta o se retrasa respecto al
+           carril según su data-z, y las que quedan al fondo se difuminan y
+           encogen un poco. El desplazamiento se aplica al revés del carril
+           (por eso el signo negativo): moverse "más despacio" es quedarse
+           atrás, y con el carril ya en negativo eso significa sumar. */
+        o.cards.forEach(function (c) {
+          var z = parseFloat(c.dataset.z);
+          if (isNaN(z)) return;
+          var dx = -desliz * (0.5 - z) * 0.22;
+          c.style.setProperty('--px', dx.toFixed(1) + 'px');
+          c.style.setProperty('--pe', (0.82 + z * 0.18).toFixed(3));   // opacidad
+          c.style.setProperty('--ps', (0.94 + z * 0.06).toFixed(3));   // escala
+        });
+
+        /* El texto de fondo va mucho más lento: es lo que da la sensación
+           de que las tarjetas pasan por delante de un espacio, no de un muro. */
+        o.fondo.forEach(function (el) {
+          var k = parseFloat(el.dataset.parallax) || 0.3;
+          el.style.transform = 'translate3d(' + (desliz * k) + 'px,0,0)';
+        });
       });
     }
 
-    measure(); update();
-    addEventListener('resize', function () { measure(); update(); });
+    function remedir() { measure(); update(); }
+
+    remedir();
+    addEventListener('resize', remedir);
+
+    /* La altura de la sección depende del ancho del carril, y ese ancho no es
+       definitivo al arrancar: las tipografías web llegan después y recomponen
+       los titulares de las tarjetas. Sin esto, la sección se queda con una
+       altura corta y el mural entero pasa volando en unos pocos píxeles de
+       scroll. Pasaba de verdad: 544 px medidos donde tocaban 1741. */
+    addEventListener('load', remedir);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(remedir);
+    if (window.ResizeObserver) {
+      var ro = new ResizeObserver(remedir);
+      instances.forEach(function (o) { ro.observe(o.track); });
+    }
+
     return update;
   }
 
@@ -468,6 +585,7 @@
     initWhatsApp();
     initFechas();
     initFormulario();
+    initLibro();
     initNotas();
     initHeroVideo();
 

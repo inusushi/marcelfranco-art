@@ -43,10 +43,13 @@
     <img src="media/logo.webp" alt="" width="344" height="344" loading="eager">
   </a>
   <div class="nav__links">
+    <a href="#sobre-mi">Sobre mí</a>
+    <a href="#trayectoria">Trayectoria</a>
     <a href="#musica">Música</a>
+    <a href="#produccion">Producción</a>
     <a href="#clases">Clases</a>
-    <a href="#libro">Libro</a>
-    <a href="#fechas">Fechas</a>
+    <a href="#libro">El libro</a>
+    <a href="#fechas">En vivo</a>
     <a href="#contrataciones">Contrataciones</a>
   </div>
 </nav>
@@ -79,8 +82,13 @@
 
       <div class="hero__meta">
         <p class="lead" data-reveal>
-          Más de dos décadas de trayectoria entre la canción de autor,
-          el R&amp;B en español y la guitarra como lenguaje.
+          Cantautor, compositor, guitarrista y productor mexicano con más de dos
+          décadas de trayectoria y formación en el Instituto Nacional de Bellas
+          Artes. Su propuesta fusiona la sensibilidad de la canción de autor,
+          diversos géneros y una profunda raíz guitarrística, explorando emociones,
+          relaciones y experiencias humanas. A través de su música busca crear
+          canciones íntimas y sofisticadas que conecten con el público y, al mismo
+          tiempo, cuestionen la realidad que nos rodea.
         </p>
 
         <div class="chip" id="proxima-fecha" data-reveal>
@@ -96,10 +104,10 @@
   <section class="marquee" data-marquee="58" aria-hidden="true">
     <div class="marquee__track">
       <div class="marquee__item">
-        <span>Canción de autor</span><span class="marquee__dot"></span>
-        <span>R&amp;B en español</span><span class="marquee__dot"></span>
+        <span>Música</span><span class="marquee__dot"></span>
+        <span>Poesía</span><span class="marquee__dot"></span>
         <span>Guitarra</span><span class="marquee__dot"></span>
-        <span>Producción</span><span class="marquee__dot"></span>
+        <span>Canciones</span><span class="marquee__dot"></span>
       </div>
     </div>
   </section>
@@ -116,7 +124,7 @@
         <p class="body-lg dim" data-reveal>
           Cantautor, compositor, guitarrista y productor mexicano con más de dos décadas
           de trayectoria y formación en el Instituto Nacional de Bellas Artes. Su propuesta
-          fusiona la sensibilidad de la canción de autor, el R&amp;B en español y una
+          fusiona la sensibilidad de la canción de autor, diversos géneros y una
           profunda raíz guitarrística, explorando emociones, relaciones y experiencias
           humanas. A través de su música busca crear canciones íntimas y sofisticadas que
           conecten con el público y, al mismo tiempo, cuestionen la realidad que nos rodea.
@@ -129,8 +137,16 @@
   </section>
 
   <!-- ══════════ TRAYECTORIA (scroll horizontal) ══════════ -->
-  <section class="s horiz" data-horiz aria-label="Trayectoria">
+  <section class="s horiz" id="trayectoria" data-horiz aria-label="Trayectoria">
     <div class="horiz__sticky">
+      <!-- Fondo de profundidad: se mueve más despacio que las tarjetas.
+           Es la capa que hace que el mural se lea como un espacio y no como
+           una tira plana. -->
+      <div class="horiz__fondo" aria-hidden="true">
+        <span class="horiz__palabra" data-parallax="0.25">TRAYECTORIA</span>
+        <span class="horiz__palabra" data-parallax="0.45">2004 — HOY</span>
+      </div>
+
       <div class="horiz__head">
         <p class="eyebrow">Trayectoria</p>
         <h2 class="h2">Dos décadas</h2>
@@ -139,16 +155,21 @@
       <!-- Los tamaños alternan a propósito (--med, --gr, --pq) y cada tarjeta
            se desplaza en vertical con --y. Es lo que da el aire de mural en
            lugar de carrusel. Si se añade una tarjeta, sigue la alternancia:
-           nunca dos del mismo tamaño seguidas. -->
+           nunca dos del mismo tamaño seguidas.
+
+           data-z es la profundidad: 0 = pegada al fondo, 1 = en primer plano.
+           app.js la usa para mover cada tarjeta a distinta velocidad. Las
+           grandes van delante (van más rápido), las pequeñas detrás. -->
       <div class="horiz__track">
-        <article class="card card--med" style="--y: -6%">
+        <a class="card card--med" style="--y: -6%" data-z="0.55"
+           href="https://youtu.be/YpZwkWKqWuk?si=4LPtjCrwUCKUVmkM" target="_blank" rel="noopener">
           <img class="card__img" src="media/foto-04.webp" alt="" loading="lazy">
           <span class="card__year">Formación</span>
           <h3 class="card__title">Instituto Nacional de Bellas Artes</h3>
-          <p class="card__note">La disciplina de la música clásica como punto de partida.</p>
-        </article>
+          <span class="card__cta">Ver en YouTube</span>
+        </a>
 
-        <a class="card card--pq" style="--y: 16%"
+        <a class="card card--pq" style="--y: 16%" data-z="0.2"
            href="https://www.youtube.com/watch?v=f5UGB8fJhhY" target="_blank" rel="noopener">
           <img class="card__img" src="media/foto-05.webp" alt="" loading="lazy">
           <span class="card__year">Primer proyecto</span>
@@ -156,38 +177,41 @@
           <span class="card__cta">Ver en YouTube</span>
         </a>
 
-        <a class="card card--gr" style="--y: -2%"
-           href="https://www.youtube.com/watch?v=YqfDfGWQPro&amp;list=RDYqfDfGWQPro&amp;start_radio=1"
+        <a class="card card--gr" style="--y: -2%" data-z="0.95"
+           href="https://youtube.com/playlist?list=PLsnKofYnTeZzzBkwhbN5ZcRjD8-pGCVxY&amp;si=Eetpcxep-uaDwFrE"
            target="_blank" rel="noopener">
           <img class="card__img" src="media/foto-06.webp" alt="" loading="lazy">
           <span class="card__year">2020</span>
           <h3 class="card__title">Limbo</h3>
           <p class="card__note">Primer álbum. Una etapa introspectiva y de exploración emocional.</p>
-          <span class="card__cta">Escuchar en YouTube</span>
+          <span class="card__cta">Escuchar el álbum</span>
         </a>
 
-        <article class="card card--pq" style="--y: -18%">
+        <a class="card card--pq" style="--y: -18%" data-z="0.15"
+           href="https://youtu.be/7dfD0wKBZYc?si=kWM1pExx3H1082PZ" target="_blank" rel="noopener">
           <img class="card__img" src="media/card-amanecer.webp" alt="" loading="lazy">
           <span class="card__year">Sencillo</span>
           <h3 class="card__title">Amanecer</h3>
-          <p class="card__note">Primer sencillo como solista.</p>
-        </article>
+          <span class="card__cta">Ver el video</span>
+        </a>
 
         <!-- Esta tarjeta es apaisada porque su imagen es un banner apaisado
              con texto: en formato vertical, el recorte se comía el titular.
              Tampoco lleva .card__note: el propio banner ya lo dice. -->
-        <article class="card card--ancha" style="--y: 12%">
+        <a class="card card--ancha" style="--y: 12%" data-z="0.7" href="#clases">
           <img class="card__img" src="media/card-clases.webp" alt="" loading="lazy">
           <span class="card__year">Hoy</span>
           <h3 class="card__title">Enseñar</h3>
-        </article>
+          <span class="card__cta">Ver las clases</span>
+        </a>
 
-        <article class="card card--gr" style="--y: -8%">
+        <a class="card card--gr" style="--y: -8%" data-z="0.85" href="#libro">
           <img class="card__img" src="media/card-libro.webp" alt="" loading="lazy">
-          <span class="card__year">Próximamente</span>
+          <span class="card__year">Ya disponible</span>
           <h3 class="card__title">Un viaje por la luz</h3>
           <p class="card__note">Su primer libro: poemas y textos de forma poética.</p>
-        </article>
+          <span class="card__cta">Comprar el libro</span>
+        </a>
       </div>
 
       <div class="horiz__progress"><i></i></div>
@@ -218,7 +242,7 @@
         <div class="plats" data-reveal>
           <a class="plat" href="https://open.spotify.com/track/4KC1LB27gcx2NXymDn6vZY" target="_blank" rel="noopener">Spotify</a>
           <a class="plat" href="https://music.apple.com/mx/album/amanecer/1734010195?i=1734010198" target="_blank" rel="noopener">Apple Music</a>
-          <a class="plat" href="https://music.youtube.com/@marcelfrancooficial" target="_blank" rel="noopener">YouTube Music</a>
+          <a class="plat" href="https://music.youtube.com/playlist?list=OLAK5uy_ldH-tlMjECNpncw8pDMlci5GYdM8mE-WI&amp;si=RAIScPCc1gSR8iZ4" target="_blank" rel="noopener">YouTube Music</a>
           <a class="plat" href="https://open.spotify.com/playlist/6IhIejzimCJKFJRkDBhgsC" target="_blank" rel="noopener">Más música</a>
         </div>
       </div>
@@ -236,6 +260,76 @@
         </p>
       </div>
     </div>
+  </section>
+
+  <!-- ══════════ PRODUCCIÓN MUSICAL ══════════ -->
+  <section class="s container" id="produccion">
+    <div class="theme-marker" data-theme-set="noche"></div>
+    <p class="eyebrow" data-reveal>Producción musical</p>
+    <h2 class="h2" data-split style="margin: 2rem 0 1.5rem; max-width: 18ch;">
+      Composición por encargo.
+    </h2>
+    <p class="body-lg dim" data-reveal style="margin-bottom: 4rem; max-width: 60ch;">
+      Una canción hecha para ti, grabada y producida. Cuéntame la idea y elige
+      hasta dónde quieres llevarla.
+    </p>
+
+    <div class="planes planes--tres">
+      <div class="plan" data-reveal>
+        <div>
+          <span class="card__year">Simple</span>
+          <p class="plan__precio">$1,500 <small>MXN</small></p>
+        </div>
+        <ul class="plan__lista">
+          <li>Sesión acústica con voz y guitarra</li>
+        </ul>
+      </div>
+
+      <div class="plan plan--destacado" data-reveal>
+        <div>
+          <span class="card__year">Mejorada</span>
+          <p class="plan__precio">$2,200 <small>MXN</small></p>
+        </div>
+        <ul class="plan__lista">
+          <li>Full band: guitarra, bajo, voz y percusión</li>
+        </ul>
+      </div>
+
+      <div class="plan" data-reveal>
+        <div>
+          <span class="card__year">Artística</span>
+          <p class="plan__precio">$3,000 <small>MXN</small></p>
+        </div>
+        <ul class="plan__lista">
+          <li>Full band</li>
+          <li>Post-producción y masterización</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="split" style="margin-top: 4rem; align-items: start;">
+      <div class="stack stack--sm">
+        <p class="eyebrow" data-reveal>Qué necesito de ti</p>
+        <ul class="plan__lista" data-reveal>
+          <li>Una referencia de letra, o la letra completa</li>
+          <li>Una canción de referencia, para orientar el estilo</li>
+        </ul>
+      </div>
+      <div class="stack stack--sm">
+        <p class="eyebrow" data-reveal>Qué recibes</p>
+        <ul class="plan__lista" data-reveal>
+          <li>MP3</li>
+          <li>AIFF y WAV sin compresión</li>
+        </ul>
+      </div>
+    </div>
+
+    <p data-reveal style="margin-top: 3rem;">
+      <a class="btn btn--cobre" data-wa="composicion" href="#">
+        <span class="btn__swap"><span>Encargar una canción</span><span aria-hidden="true">Encargar una canción</span></span>
+        <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.2 1.3-2 1.4-.5.1-1.2.1-3.4-.8-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.1-1.5-1.1-2.8s.7-2 .9-2.2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.5c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.2.1.4.1.6-.1l.8-1c.2-.2.3-.2.6-.1l2 1c.3.1.5.2.5.4.1.1.1.7-.1 1.4z"/></svg>
+      </a>
+    </p>
   </section>
 
   <!-- ══════════ CLASES ══════════ -->
@@ -313,26 +407,47 @@
              loading="lazy" width="800" height="1108">
       </div>
       <div class="stack">
-        <p class="eyebrow" data-reveal>El libro · Próximamente</p>
+        <p class="eyebrow" data-reveal>El libro · Ya disponible</p>
         <h2 class="h2" data-split>Un viaje por la luz</h2>
         <p class="body-lg dim" data-reveal>
           Una serie de poemas y textos de forma poética basados en mi experiencia
-          personal de vida. Cuarenta páginas, en español, para todo público.
+          personal de vida. Segunda edición, en español, para todo público.
         </p>
         <ul class="plan__lista" data-reveal>
           <li>Formato digital (PDF)</li>
-          <li>40 páginas · español</li>
+          <li>41 páginas · español</li>
           <li>Registrado en Indautor</li>
         </ul>
         <p class="plan__precio" data-reveal>$250 <small>MXN</small></p>
+
         <p data-reveal>
           <a class="btn btn--cobre" data-wa="libro" href="#">
-            <span class="btn__swap"><span>Avísame cuando salga</span><span aria-hidden="true">Avísame cuando salga</span></span>
+            <span class="btn__swap"><span>Comprar por WhatsApp</span><span aria-hidden="true">Comprar por WhatsApp</span></span>
+            <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.2 1.3-2 1.4-.5.1-1.2.1-3.4-.8-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.1-1.5-1.1-2.8s.7-2 .9-2.2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.5c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.2.1.4.1.6-.1l.8-1c.2-.2.3-.2.6-.1l2 1c.3.1.5.2.5.4.1.1.1.7-.1 1.4z"/></svg>
           </a>
         </p>
-        <p class="form__nota" data-reveal>
-          En proceso de corrección de estilo. Escríbeme y te aviso en cuanto esté disponible.
-        </p>
+
+        <!-- Desbloqueo. El PDF servido está cifrado con AES-256 y la clave es
+             la misma que se teclea aquí, así que este formulario NO es lo que
+             protege el libro: aunque alguien encuentre la URL del archivo, sin
+             la clave no lo abre. Ver LEEME → "El libro va cifrado". -->
+        <div class="unlock" data-reveal>
+          <p class="unlock__titulo">¿Ya lo compraste?</p>
+          <form class="unlock__form" id="form-libro" autocomplete="off">
+            <label class="sr" for="f-clave">Código de acceso al libro</label>
+            <input id="f-clave" name="clave" type="text" inputmode="numeric"
+                   pattern="[0-9]*" maxlength="8" placeholder="Tu código"
+                   aria-describedby="unlock-msg" required>
+            <button class="btn btn--ghost" type="submit">
+              <span class="btn__swap"><span>Desbloquear</span><span aria-hidden="true">Desbloquear</span></span>
+            </button>
+          </form>
+          <p class="unlock__msg" id="unlock-msg" role="status"></p>
+          <p class="form__nota">
+            Marcel te envía el código al confirmar el pago. El archivo también te
+            lo pedirá al abrirlo, así que guárdalo.
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -353,8 +468,8 @@
       Música en vivo para tu evento.
     </h2>
     <p class="body-lg" data-reveal style="margin-bottom: 3.5rem;">
-      Bodas, bares, festivales, eventos privados, sesiones de estudio y composición
-      por encargo. Solo o con banda completa, según lo que necesite el evento.
+      Bodas, bares, festivales, eventos privados, sesiones de estudio, etc.
+      Solo o con banda completa, según lo que necesite el evento.
       Desde $2,000 MXN la hora. Base en la Ciudad de México; a otros estados se
       acuerdan viáticos.
     </p>
@@ -433,10 +548,13 @@
     <div class="footer__col">
       <h4>Página</h4>
       <ul>
+        <li><a href="#sobre-mi">Sobre mí</a></li>
+        <li><a href="#trayectoria">Trayectoria</a></li>
         <li><a href="#musica">Música</a></li>
-        <li><a href="#clases">Clases</a></li>
-        <li><a href="#libro">Libro</a></li>
-        <li><a href="#fechas">Fechas</a></li>
+        <li><a href="#produccion">Producción musical</a></li>
+        <li><a href="#clases">Clases de guitarra</a></li>
+        <li><a href="#libro">El libro</a></li>
+        <li><a href="#fechas">En vivo</a></li>
         <li><a href="#contrataciones">Contrataciones</a></li>
       </ul>
     </div>
@@ -444,7 +562,7 @@
       <h4>Sígueme</h4>
       <ul>
         <li><a href="https://www.instagram.com/marcelfrancooficial/" target="_blank" rel="noopener">Instagram</a></li>
-        <li><a href="https://music.youtube.com/@marcelfrancooficial" target="_blank" rel="noopener">YouTube</a></li>
+        <li><a href="https://youtube.com/@marcelfrancooficial?si=kazYkVdS2vaCF1OU" target="_blank" rel="noopener">YouTube</a></li>
         <li><a href="https://www.tiktok.com/@marcelfrancooficial" target="_blank" rel="noopener">TikTok</a></li>
         <li><a href="https://open.spotify.com/playlist/6IhIejzimCJKFJRkDBhgsC" target="_blank" rel="noopener">Spotify</a></li>
         <li><a href="mailto:marcelfrancooficial@gmail.com">Correo</a></li>

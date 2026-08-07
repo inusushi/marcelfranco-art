@@ -52,6 +52,31 @@ el número esté activo en WhatsApp solo lo confirma un envío real.
 - **Años de la trayectoria.** Solo "Limbo · 2020" está confirmado por él. Las
   demás tarjetas van sin año a propósito, para no inventar.
 
+## El libro va cifrado
+
+El repositorio es **público**, así que cualquiera puede llegar a
+`media/un-viaje-por-la-luz.pdf` sin pasar por la web. Por eso la protección
+**no** es el formulario de la página: el PDF está cifrado con **AES-256** y su
+clave de usuario es la misma que se teclea ahí. El formulario solo es la
+comodidad de recibir el enlace; quien se salte la web se topa igual con la
+contraseña al abrir el archivo.
+
+**La clave está en dos sitios y tienen que coincidir:** `app.js` →
+`CONFIG.claveLibro`, y el cifrado del propio PDF. Cambiar solo el JavaScript no
+cambia nada. Para cambiarla de verdad hay que volver a cifrar:
+
+```bash
+python -c "import pikepdf,secrets; p=pikepdf.open('ORIGINAL.pdf'); p.save('sitio/media/un-viaje-por-la-luz.pdf', encryption=pikepdf.Encryption(user='NUEVACLAVE', owner=secrets.token_urlsafe(24), aes=True, R=6))"
+```
+
+**Hasta dónde protege esto.** Frena que el PDF circule solo por haber
+encontrado la URL. No frena a quien se lo proponga: `2345` son cuatro dígitos,
+diez mil combinaciones, y un programa de fuerza bruta las prueba en segundos.
+Tampoco impide que un comprador legítimo reenvíe el archivo y la clave. Es un
+apaño razonable mientras no haya cobros; cuando los haya, lo que toca es servir
+el PDF desde un backend con enlaces caducables por compra, y entonces esta
+clave compartida sobra.
+
 ## Decisiones que no hay que deshacer
 
 - **El cambio de tema es instantáneo, sin desvanecido.** Está documentado en
@@ -79,6 +104,21 @@ el número esté activo en WhatsApp solo lo confirma un envío real.
   monitor de 1440 se estira un 11% y en uno de 1920 bastante más. El velo
   oscuro lo disimula, pero si Marcel encuentra esa toma en resolución mayor,
   vale la pena sustituirla: es la primera imagen que ve todo el mundo.
+- **El recorrido del pin se mide con `clientWidth`, nunca con `innerWidth`.**
+  `innerWidth` incluye la barra de scroll; el carril se maqueta sin ella. Con
+  `innerWidth` el recorrido salía ~15 px corto y la última tarjeta no acababa
+  de entrar nunca.
+- **`measure()` se rehace cuando cambia el `scrollWidth` del carril**, no solo
+  al redimensionar la ventana. Las tipografías web llegan después del primer
+  cálculo y recomponen los titulares: sin esa comprobación la sección se
+  quedaba con 544 px de alto donde tocaban 1741, y el mural entero pasaba
+  volando en unos pocos píxeles de scroll. Un `ResizeObserver` sobre el carril
+  **no** basta: vigila su caja, y la caja no cambia cuando lo que crece es el
+  contenido de dentro.
+- **Los enlaces de descarga y las anclas internas se excluyen del retraso de
+  1.5 s de las notas.** Reenviar a mano un enlace con `download` pierde ese
+  atributo y el PDF se abriría en el navegador en vez de bajarse; y retrasar un
+  salto dentro de la misma página se siente como que el clic no funcionó.
 - **Ni `.reglas li` ni `.plan__lista li` pueden ser `display: grid` o `flex`.**
   Fue un bug real: en un contenedor grid o flex, cada `<strong>` y cada trozo
   de texto suelto se vuelve un ítem independiente, y el párrafo se partía en

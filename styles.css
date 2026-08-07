@@ -283,6 +283,22 @@ input, textarea, select, button { font: inherit; color: inherit; }
   pointer-events: none; display: grid; gap: 0.75rem;
 }
 .horiz__track { display: flex; gap: var(--gap); padding-inline: max(var(--container), 5vw); will-change: transform; }
+
+/* Capa de fondo del mural: tipografía enorme que se arrastra mucho más
+   despacio que las tarjetas. Va detrás de todo y no recibe clics. */
+.horiz__fondo {
+  position: absolute; inset: 0; z-index: 0; overflow: hidden;
+  pointer-events: none; display: grid; align-content: center; gap: 2vh;
+}
+.horiz__palabra {
+  font-family: var(--ff-display); white-space: nowrap;
+  font-size: clamp(6rem, 22vh, 16rem); line-height: 0.85;
+  letter-spacing: 0.02em;
+  color: transparent; -webkit-text-stroke: 1px var(--line);
+  opacity: 0.5; will-change: transform;
+}
+.horiz__palabra:nth-child(2) { padding-left: 22vw; opacity: 0.3; }
+.horiz__track, .horiz__head, .horiz__progress { position: relative; z-index: 1; }
 /* Cada tarjeta se centra sobre el eje del carril y de ahí se desplaza con --y,
    así el desplazamiento es simétrico y ninguna se sale por arriba o por abajo.
    El translate va en la tarjeta y no en el carril: el carril ya lleva su
@@ -291,7 +307,13 @@ input, textarea, select, button { font: inherit; color: inherit; }
   flex: none; width: 24rem; height: 60svh; border-radius: var(--r-med);
   background: var(--carbon-2); border: 1px solid var(--line);
   overflow: hidden; position: relative; display: grid; align-content: end; padding: var(--pad-small);
-  align-self: center; transform: translateY(var(--y, 0));
+  align-self: center;
+  /* --px, --pe y --ps las escribe app.js con el parallax. El orden importa:
+     el desplazamiento de profundidad va ANTES del vertical para que la
+     escala no amplifique el offset de --y. */
+  transform: translate3d(var(--px, 0), var(--y, 0), 0) scale(var(--ps, 1));
+  opacity: var(--pe, 1);
+  will-change: transform;
 }
 .card--gr { width: 30rem; height: 74svh; }
 .card--med { width: 24rem; height: 58svh; }
@@ -320,6 +342,38 @@ a.card:hover .card__img { transform: scale(1.04); }
   transition: width 0.4s var(--ease);
 }
 a.card:hover .card__cta::after { width: 2.6rem; }
+
+/* ---------- Producción musical ---------- */
+.planes--tres { grid-template-columns: repeat(3, 1fr); }
+
+/* ---------- Desbloqueo del libro ---------- */
+.unlock {
+  margin-top: var(--pad-small); padding: var(--pad-small);
+  border: 1px solid var(--line); border-radius: var(--r-med);
+  background: color-mix(in oklab, var(--carbon-2) 60%, transparent);
+  display: grid; gap: var(--pad-mini);
+}
+.unlock__titulo { font-family: var(--ff-display); font-size: var(--t-h4); }
+.unlock__form { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: stretch; }
+.unlock__form input {
+  flex: 1 1 8rem; min-width: 0;
+  background: transparent; border: 1px solid var(--line);
+  border-radius: var(--r-small); color: var(--fg);
+  font-family: inherit; font-size: var(--t-small);
+  padding: 0.85rem 1rem; letter-spacing: 0.3em;
+  transition: border-color 0.3s var(--ease);
+}
+.unlock__form input:focus { border-color: var(--cobre); outline: none; }
+.unlock__msg { font-size: var(--t-small); color: var(--fg-dim); min-height: 1.2em; }
+.unlock.is-open .unlock__msg { color: var(--cobre); }
+.unlock.is-wrong { animation: unlock-no 0.4s var(--ease); }
+.unlock.is-wrong .unlock__msg { color: var(--marfil); }
+@keyframes unlock-no {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+.unlock__descarga { justify-self: start; }
 .card__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
 .card::after {
   content: ""; position: absolute; inset: 0; z-index: 1;
@@ -455,7 +509,9 @@ a.card:hover .card__cta::after { width: 2.6rem; }
     --t-h4: 1.25rem; --t-body: 1rem;
     --pad-xl: 4.5rem; --pad-large: 3rem; --pad-med: 2rem;
   }
-  .split, .split--wide, .planes, .form__grid, .footer__grid { grid-template-columns: 1fr; }
+  .split, .split--wide, .planes, .planes--tres, .form__grid, .footer__grid { grid-template-columns: 1fr; }
+  .horiz__palabra { font-size: clamp(3.5rem, 14vh, 7rem); }
+  .horiz__palabra:nth-child(2) { padding-left: 40vw; }
   /* En móvil el mural se aplana: el desplazamiento vertical se reduce a la
      mitad y las anchuras se recalculan en vw, porque 30rem no cabe. */
   .card { width: 76vw; height: 54svh; transform: translateY(calc(var(--y, 0) / 2)); }
@@ -498,6 +554,7 @@ a.card:hover .card__cta::after { width: 2.6rem; }
   .horiz__sticky { position: static; height: auto; }
   .horiz__track { overflow-x: auto; transform: none !important; }
   .nota-fly { display: none; }
-  .card { transform: none !important; }
+  .card { transform: none !important; opacity: 1 !important; }
   [data-cierre] { transform: none !important; }
+  .horiz__fondo { display: none; }
 }
