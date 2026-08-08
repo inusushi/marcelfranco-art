@@ -407,6 +407,21 @@
     if (!sections.length) return;
     var instances = [];
 
+    /* Píxeles de desfase entre la capa más al fondo y la más al frente.
+       Subirlo hace el parallax más evidente; pasado cierto punto las
+       tarjetas se solapan, lo cual está previsto (van apiladas por
+       profundidad) pero deja de leerse como una fila. */
+    var AMPLITUD = 105;
+
+    /* Apilado por profundidad: lo que está delante tapa a lo que está
+       detrás. Sin esto, el solape que provoca el parallax se vería como un
+       fallo de maquetación en vez de como capas. */
+    [].forEach.call(sections, function (s) {
+      s.querySelectorAll('[data-z]').forEach(function (c) {
+        c.style.zIndex = String(Math.round(parseFloat(c.dataset.z) * 20) + 1);
+      });
+    });
+
     function measure() {
       instances = [];
       [].forEach.call(sections, function (section) {
@@ -446,17 +461,20 @@
         if (o.bar) o.bar.style.width = (p * 100) + '%';
 
         /* Profundidad. Cada tarjeta se adelanta o se retrasa respecto al
-           carril según su data-z, y las que quedan al fondo se difuminan y
-           encogen un poco. El desplazamiento se aplica al revés del carril
-           (por eso el signo negativo): moverse "más despacio" es quedarse
-           atrás, y con el carril ya en negativo eso significa sumar. */
+           carril según su data-z: las del fondo se quedan atrás, las del
+           primer plano se adelantan, y además se difuminan y encogen.
+
+           El desplazamiento se calcula sobre AMPLITUD y no sobre el recorrido
+           entero: si dependiera del recorrido, un mural más largo dispararía
+           el desfase hasta separar las tarjetas del carril por completo. Así
+           el efecto se nota igual sea cual sea el número de piezas. */
         o.cards.forEach(function (c) {
           var z = parseFloat(c.dataset.z);
           if (isNaN(z)) return;
-          var dx = -desliz * (0.5 - z) * 0.22;
+          var dx = p * AMPLITUD * (0.5 - z) * 2;
           c.style.setProperty('--px', dx.toFixed(1) + 'px');
-          c.style.setProperty('--pe', (0.82 + z * 0.18).toFixed(3));   // opacidad
-          c.style.setProperty('--ps', (0.94 + z * 0.06).toFixed(3));   // escala
+          c.style.setProperty('--pe', (0.7 + z * 0.3).toFixed(3));    // opacidad
+          c.style.setProperty('--ps', (0.88 + z * 0.12).toFixed(3));  // escala
         });
 
         /* El texto de fondo va mucho más lento: es lo que da la sensación

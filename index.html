@@ -158,10 +158,15 @@
            nunca dos del mismo tamaño seguidas.
 
            data-z es la profundidad: 0 = pegada al fondo, 1 = en primer plano.
+           Va ligada al tamaño (las grandes delante) y, sobre todo, NO debe
+           dar saltos bruscos entre tarjetas vecinas: cuanto más se
+           diferencian dos contiguas, más se separan o se pisan al final del
+           recorrido. Con saltos de 0.75 se abrían huecos de 293 px junto a
+           solapes de 114 px; con saltos de 0.25 a 0.35 queda parejo.
            app.js la usa para mover cada tarjeta a distinta velocidad. Las
            grandes van delante (van más rápido), las pequeñas detrás. -->
       <div class="horiz__track">
-        <a class="card card--med" style="--y: -6%" data-z="0.55"
+        <a class="card card--med" style="--y: -6%" data-z="0.5"
            href="https://youtu.be/YpZwkWKqWuk?si=4LPtjCrwUCKUVmkM" target="_blank" rel="noopener">
           <img class="card__img" src="media/card-bellasartes.webp" alt="" loading="lazy">
           <span class="card__year">Formación</span>
@@ -169,7 +174,7 @@
           <span class="card__cta">Ver en YouTube</span>
         </a>
 
-        <a class="card card--cuad-pq" style="--y: 16%" data-z="0.2"
+        <a class="card card--cuad-pq" style="--y: 16%" data-z="0.25"
            href="https://www.youtube.com/watch?v=f5UGB8fJhhY" target="_blank" rel="noopener">
           <img class="card__img" src="media/card-dante.webp" alt="" loading="lazy">
           <span class="card__year">Primer proyecto</span>
@@ -177,7 +182,7 @@
           <span class="card__cta">Ver en YouTube</span>
         </a>
 
-        <a class="card card--cuad" style="--y: -2%" data-z="0.95"
+        <a class="card card--cuad" style="--y: -2%" data-z="0.7"
            href="https://youtube.com/playlist?list=PLsnKofYnTeZzzBkwhbN5ZcRjD8-pGCVxY&amp;si=Eetpcxep-uaDwFrE"
            target="_blank" rel="noopener">
           <img class="card__img" src="media/card-limbo.webp" alt="" loading="lazy">
@@ -187,7 +192,7 @@
           <span class="card__cta">Escuchar el álbum</span>
         </a>
 
-        <a class="card card--pq" style="--y: -18%" data-z="0.15"
+        <a class="card card--cuad-med" style="--y: -18%" data-z="0.45"
            href="https://youtu.be/7dfD0wKBZYc?si=kWM1pExx3H1082PZ" target="_blank" rel="noopener">
           <img class="card__img" src="media/card-amanecer.webp" alt="" loading="lazy">
           <span class="card__year">Sencillo</span>
@@ -198,14 +203,14 @@
         <!-- Esta tarjeta es apaisada porque su imagen es un banner apaisado
              con texto: en formato vertical, el recorte se comía el titular.
              Tampoco lleva .card__note: el propio banner ya lo dice. -->
-        <a class="card card--ancha" style="--y: 12%" data-z="0.7" href="#clases">
+        <a class="card card--ancha" style="--y: 12%" data-z="0.8" href="#clases">
           <img class="card__img" src="media/card-clases.webp" alt="" loading="lazy">
           <span class="card__year">Hoy</span>
           <h3 class="card__title">Enseñar</h3>
           <span class="card__cta">Ver las clases</span>
         </a>
 
-        <a class="card card--gr" style="--y: -8%" data-z="0.85" href="#libro">
+        <a class="card card--cuad-gr" style="--y: -8%" data-z="0.95" href="#libro">
           <img class="card__img" src="media/card-libro.webp" alt="" loading="lazy">
           <span class="card__year">Ya disponible</span>
           <h3 class="card__title">Un viaje por la luz</h3>
@@ -393,7 +398,7 @@
         </ol>
       </div>
       <div class="frame" data-reveal>
-        <img src="media/clases.webp" alt="Marcel Franco dando clase de guitarra" loading="lazy" width="1067" height="1600">
+        <img src="media/clases-retrato.webp" alt="Marcel Franco cantando en directo" loading="lazy" width="1280" height="960">
       </div>
     </div>
   </section>

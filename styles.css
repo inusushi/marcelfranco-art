@@ -282,7 +282,13 @@ input, textarea, select, button { font: inherit; color: inherit; }
   position: absolute; top: 22%; left: max(var(--container), 5vw); z-index: 2;
   pointer-events: none; display: grid; gap: 0.75rem;
 }
-.horiz__track { display: flex; gap: var(--gap); padding-inline: max(var(--container), 5vw); will-change: transform; }
+/* La separación es mucho mayor que el --gap general: el parallax necesita
+   sitio para que cada tarjeta se adelante o se retrase sin pisar a la vecina,
+   y el aire entre piezas es parte de lo que hace que se lea como un mural. */
+.horiz__track {
+  display: flex; gap: calc(var(--gap) * 4); align-items: center;
+  padding-inline: max(var(--container), 5vw); will-change: transform;
+}
 
 /* Capa de fondo del mural: tipografía enorme que se arrastra mucho más
    despacio que las tarjetas. Va detrás de todo y no recibe clics. */
@@ -315,19 +321,30 @@ input, textarea, select, button { font: inherit; color: inherit; }
   opacity: var(--pe, 1);
   will-change: transform;
 }
-.card--gr { width: 30rem; height: 74svh; }
-.card--med { width: 24rem; height: 58svh; }
-.card--pq  { width: 17rem; height: 40svh; }
+/* Todas las variantes fijan la PROPORCIÓN y limitan el ancho con svh, en vez
+   de fijar una altura en svh. Con altura en svh, el ancho no acompaña: en una
+   ventana baja la tarjeta se achata y object-fit se come la imagen (al banner
+   de clases le cortaba el titular; al retrato, un 30%). El min() con svh es
+   lo que impide que una tarjeta alta se salga del pin. */
+.card--gr  { width: min(30rem, 46svh); height: auto; aspect-ratio: 62 / 100; }
+.card--med { width: min(24rem, 46svh); height: auto; aspect-ratio: 62 / 100; }
+.card--pq  { width: min(17rem, 46svh); height: auto; aspect-ratio: 62 / 100; }
 /* Apaisada, para material que ya viene en horizontal (el banner de clases).
-   Un recorte vertical le cortaría el titular por la mitad. */
-.card--ancha { width: 36rem; height: 26svh; }
+   La proporción se fija con aspect-ratio y NO con una altura en svh: con svh,
+   la altura depende del alto de la ventana y la anchura no, así que en una
+   ventana baja la tarjeta se volvía una franja y le cortaba el titular
+   «CLASES» al banner. Con aspect-ratio encaja igual en cualquier ventana. */
+.card--ancha { width: min(36rem, 160svh); height: auto; aspect-ratio: 2 / 1; }
 
 /* Cuadradas, para material que nace cuadrado: portadas de disco y fotos de
    grupo. No se recortan a vertical a propósito: a la portada de Limbo, que es
    simétrica, el recorte le comía las alas; y en la foto de El Cuarto de Dante
-   deja fuera a los músicos de los lados. */
-.card--cuad { width: 30rem; height: auto; aspect-ratio: 1; }
-.card--cuad-pq { width: 21rem; height: auto; aspect-ratio: 1; }
+   deja fuera a los músicos de los lados. Hay cuatro tamaños para que tanto
+   cuadrado no aplane el mural. */
+.card--cuad-pq  { width: min(21rem, 76svh); height: auto; aspect-ratio: 1; }
+.card--cuad-med { width: min(25rem, 76svh); height: auto; aspect-ratio: 1; }
+.card--cuad     { width: min(30rem, 76svh); height: auto; aspect-ratio: 1; }
+.card--cuad-gr  { width: min(34rem, 76svh); height: auto; aspect-ratio: 1; }
 .card--cuad-pq .card__title { font-size: var(--t-h4); }
 /* En las pequeñas el titular a tamaño h3 se come la tarjeta entera. */
 .card--pq .card__title { font-size: var(--t-h4); }
@@ -526,9 +543,11 @@ a.card:hover .card__cta::after { width: 2.6rem; }
   .card--gr { width: 82vw; height: 62svh; }
   .card--med { width: 74vw; height: 52svh; }
   .card--pq { width: 58vw; height: 38svh; }
-  .card--ancha { width: 86vw; height: 20svh; }
-  .card--cuad { width: 78vw; height: auto; }
-  .card--cuad-pq { width: 62vw; height: auto; }
+  .card--ancha { width: 86vw; height: auto; }
+  .card--cuad-pq  { width: 60vw; height: auto; }
+  .card--cuad-med { width: 68vw; height: auto; }
+  .card--cuad     { width: 76vw; height: auto; }
+  .card--cuad-gr  { width: 84vw; height: auto; }
   /* En una columna, cerrar de lado a lado se lee como un temblor. */
   [data-cierre] { --cx: 0px !important; }
   .hero__meta { flex-direction: column; align-items: flex-start; gap: var(--pad-small); }

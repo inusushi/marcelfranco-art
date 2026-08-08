@@ -139,14 +139,27 @@ clave compartida sobra.
   mitad midiera su propio centro, la más alta cerraría más tarde y las dos no
   se encontrarían a la vez. En móvil está desactivado: a una columna, cerrar
   de lado a lado se lee como un temblor.
-- **La forma de cada tarjeta la manda su imagen, no la retícula.** Hay cuatro
-  variantes y cada una existe por un motivo concreto:
-  `--ancha` para el banner apaisado de clases, y `--cuad` / `--cuad-pq` para
-  material que nace cuadrado. La portada de Limbo es simétrica y un recorte
-  vertical le comía las alas; en la foto de El Cuarto de Dante dejaba fuera a
-  los músicos de los lados. Antes de meter una imagen nueva, mira su
-  proporción y elige la variante que menos recorte: el objetivo es quedarse
-  por debajo del 5%.
+- **Ninguna tarjeta fija su altura en `svh`. Se fija la proporción con
+  `aspect-ratio` y se limita el ancho con `min(rem, svh)`.** Con altura en
+  `svh` el ancho no acompaña: al bajar la ventana la tarjeta se achataba y
+  `object-fit: cover` se comía la imagen. Le cortaba el titular «CLASES» al
+  banner y un 30% al retrato de Bellas Artes. El `min()` con `svh` es lo que
+  impide que una tarjeta alta se salga del pin en una ventana baja.
+- **La forma de cada tarjeta la manda su imagen, no la retícula.** `--ancha`
+  para el banner apaisado; `--cuad-pq/-med/(base)/-gr` para material que nace
+  cuadrado (portadas de disco y fotos de grupo); `--pq/-med/-gr` para retratos
+  verticales. La portada de Limbo es simétrica y un recorte vertical le comía
+  las alas; en la foto de El Cuarto de Dante dejaba fuera a los músicos de los
+  lados. Antes de meter una imagen nueva, mira su proporción y elige la
+  variante que menos recorte: **el objetivo es 0%**, y se comprueba midiendo,
+  no a ojo.
+- **`data-z` no debe dar saltos bruscos entre tarjetas vecinas.** Cuanto más
+  se diferencian dos contiguas, más se separan o se pisan al final del
+  recorrido. Con saltos de 0.75 se abrían huecos de 293 px junto a solapes de
+  114 px; con saltos de 0.25 a 0.35 queda parejo (solape máximo de 8 px).
+  `AMPLITUD` en `app.js` gradúa lo evidente que es el efecto; el desfase se
+  calcula sobre ella y **no** sobre el recorrido, para que añadir tarjetas no
+  dispare el desplazamiento.
 - **Las tarjetas de trayectoria alternan tamaño a propósito** (`--gr`, `--med`,
   `--pq`) y se desplazan en vertical con `--y`. Es lo que da el aire de mural
   en vez de carrusel; si se añade una tarjeta, que no queden dos iguales
