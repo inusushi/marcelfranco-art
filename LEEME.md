@@ -139,6 +139,14 @@ clave compartida sobra.
   mitad midiera su propio centro, la más alta cerraría más tarde y las dos no
   se encontrarían a la vez. En móvil está desactivado: a una columna, cerrar
   de lado a lado se lee como un temblor.
+- **La forma de cada tarjeta la manda su imagen, no la retícula.** Hay cuatro
+  variantes y cada una existe por un motivo concreto:
+  `--ancha` para el banner apaisado de clases, y `--cuad` / `--cuad-pq` para
+  material que nace cuadrado. La portada de Limbo es simétrica y un recorte
+  vertical le comía las alas; en la foto de El Cuarto de Dante dejaba fuera a
+  los músicos de los lados. Antes de meter una imagen nueva, mira su
+  proporción y elige la variante que menos recorte: el objetivo es quedarse
+  por debajo del 5%.
 - **Las tarjetas de trayectoria alternan tamaño a propósito** (`--gr`, `--med`,
   `--pq`) y se desplazan en vertical con `--y`. Es lo que da el aire de mural
   en vez de carrusel; si se añade una tarjeta, que no queden dos iguales

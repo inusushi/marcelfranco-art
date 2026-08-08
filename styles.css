@@ -321,6 +321,14 @@ input, textarea, select, button { font: inherit; color: inherit; }
 /* Apaisada, para material que ya viene en horizontal (el banner de clases).
    Un recorte vertical le cortaría el titular por la mitad. */
 .card--ancha { width: 36rem; height: 26svh; }
+
+/* Cuadradas, para material que nace cuadrado: portadas de disco y fotos de
+   grupo. No se recortan a vertical a propósito: a la portada de Limbo, que es
+   simétrica, el recorte le comía las alas; y en la foto de El Cuarto de Dante
+   deja fuera a los músicos de los lados. */
+.card--cuad { width: 30rem; height: auto; aspect-ratio: 1; }
+.card--cuad-pq { width: 21rem; height: auto; aspect-ratio: 1; }
+.card--cuad-pq .card__title { font-size: var(--t-h4); }
 /* En las pequeñas el titular a tamaño h3 se come la tarjeta entera. */
 .card--pq .card__title { font-size: var(--t-h4); }
 .card--pq .card__note { display: none; }
@@ -519,6 +527,8 @@ a.card:hover .card__cta::after { width: 2.6rem; }
   .card--med { width: 74vw; height: 52svh; }
   .card--pq { width: 58vw; height: 38svh; }
   .card--ancha { width: 86vw; height: 20svh; }
+  .card--cuad { width: 78vw; height: auto; }
+  .card--cuad-pq { width: 62vw; height: auto; }
   /* En una columna, cerrar de lado a lado se lee como un temblor. */
   [data-cierre] { --cx: 0px !important; }
   .hero__meta { flex-direction: column; align-items: flex-start; gap: var(--pad-small); }
