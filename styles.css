@@ -304,7 +304,12 @@ input, textarea, select, button { font: inherit; color: inherit; }
   opacity: 0.5; will-change: transform;
 }
 .horiz__palabra:nth-child(2) { padding-left: 22vw; opacity: 0.3; }
-.horiz__track, .horiz__head, .horiz__progress { position: relative; z-index: 1; }
+/* Solo z-index: el titular y la barra de progreso TIENEN que seguir siendo
+   position:absolute. Al ponerles position:relative pasaban a ser elementos en
+   flujo dentro del sticky (que es flex) y empujaban el carril hacia la derecha
+   el ancho del titular: la última tarjeta se salía justo esos píxeles. */
+.horiz__track { position: relative; z-index: 1; }
+.horiz__head, .horiz__progress { z-index: 2; }
 /* Cada tarjeta se centra sobre el eje del carril y de ahí se desplaza con --y,
    así el desplazamiento es simétrico y ninguna se sale por arriba o por abajo.
    El translate va en la tarjeta y no en el carril: el carril ya lleva su
@@ -539,7 +544,13 @@ a.card:hover .card__cta::after { width: 2.6rem; }
   .horiz__palabra:nth-child(2) { padding-left: 40vw; }
   /* En móvil el mural se aplana: el desplazamiento vertical se reduce a la
      mitad y las anchuras se recalculan en vw, porque 30rem no cabe. */
-  .card { width: 76vw; height: 54svh; transform: translateY(calc(var(--y, 0) / 2)); }
+  /* Repite el transform completo, no solo la Y: si se deja solo translateY,
+     se pierden el desfase del parallax (--px) y la escala (--ps) y en móvil
+     el efecto de profundidad no existe. */
+  .card {
+    width: 76vw; height: auto;
+    transform: translate3d(var(--px, 0), calc(var(--y, 0) / 2), 0) scale(var(--ps, 1));
+  }
   .card--gr { width: 82vw; height: 62svh; }
   .card--med { width: 74vw; height: 52svh; }
   .card--pq { width: 58vw; height: 38svh; }

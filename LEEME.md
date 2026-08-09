@@ -153,6 +153,21 @@ clave compartida sobra.
   lados. Antes de meter una imagen nueva, mira su proporción y elige la
   variante que menos recorte: **el objetivo es 0%**, y se comprueba midiendo,
   no a ojo.
+- **`.horiz__head` y `.horiz__progress` tienen que seguir siendo
+  `position: absolute`.** Si se les pone `position: relative` (p. ej. para
+  darles z-index), pasan a ser elementos en flujo dentro de `.horiz__sticky`,
+  que es flex, y empujan el carril a la derecha el ancho del titular: la
+  última tarjeta se sale por el borde justo esos píxeles. Para apilarlas basta
+  con `z-index`, sin tocar `position`.
+- **El desfase del parallax sigue una campana (`sin(p·π)`): 0 al principio,
+  máximo a media altura y 0 al final.** No es estético: si creciera hasta el
+  final, la tarjeta del primer plano acabaría desplazada fuera de pantalla. Al
+  volver a cero, el mural aterriza exactamente donde dice la maqueta y la
+  última tarjeta queda centrada.
+- **La regla de `.card` en móvil repite el `transform` completo.** Si solo
+  declara `translateY`, pisa el transform base y en móvil se pierden el
+  desfase (`--px`) y la escala (`--ps`): el parallax deja de existir sin que
+  salte ningún error.
 - **`data-z` no debe dar saltos bruscos entre tarjetas vecinas.** Cuanto más
   se diferencian dos contiguas, más se separan o se pisan al final del
   recorrido. Con saltos de 0.75 se abrían huecos de 293 px junto a solapes de

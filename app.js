@@ -468,10 +468,18 @@
            entero: si dependiera del recorrido, un mural más largo dispararía
            el desfase hasta separar las tarjetas del carril por completo. Así
            el efecto se nota igual sea cual sea el número de piezas. */
+        /* El desfase sigue una campana: vale 0 al principio, es máximo a
+           mitad de recorrido y vuelve a 0 al final. Así el mural arranca y
+           aterriza exactamente donde dice la maqueta, y la última tarjeta
+           acaba centrada en pantalla en vez de salirse por un lado. Con un
+           desfase que creciera hasta el final, la tarjeta del primer plano
+           terminaba cortada. */
+        var campana = Math.sin(p * Math.PI);
+
         o.cards.forEach(function (c) {
           var z = parseFloat(c.dataset.z);
           if (isNaN(z)) return;
-          var dx = p * AMPLITUD * (0.5 - z) * 2;
+          var dx = campana * AMPLITUD * (0.5 - z) * 2;
           c.style.setProperty('--px', dx.toFixed(1) + 'px');
           c.style.setProperty('--pe', (0.7 + z * 0.3).toFixed(3));    // opacidad
           c.style.setProperty('--ps', (0.88 + z * 0.12).toFixed(3));  // escala
