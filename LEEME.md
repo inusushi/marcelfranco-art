@@ -127,6 +127,13 @@ fotos, respetar esa convención de nombres o habrá que colocarlas a mano.
     si no coincide con el arranque, se ve un salto al entrar el video.
   - Hubo un primer video (`marcel background web M.mp4`) que se descartó por
     llevar marca de agua de Pika incrustada. No recuperarlo.
+  - **El video lleva un montaje por tramos, no va a velocidad uniforme.**
+    Sobre `Videos Marcel/Video para Hero.mp4`: el primer plano de la mano
+    (0–6 s) va a velocidad normal, el plano del guitarrista (6–17 s) va un
+    25% más rápido, y la placa de texto final (17 s → final) queda intacta.
+    Si se vuelve a codificar desde el original hay que repetir ese montaje o
+    se pierde. El comando está en el historial de git, en el commit
+    «Acelera un 25% el plano del guitarrista».
 - **La foto del hero medía 1280×960**, que es lo que dio el original. En un
   monitor de 1440 se estira un 11% y en uno de 1920 bastante más. El velo
   oscuro lo disimula, pero si Marcel encuentra esa toma en resolución mayor,
