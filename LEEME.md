@@ -85,8 +85,19 @@ fotos salen de `Galeria marcel/` y el reparto es automático por el nombre del
 archivo (`breve espacio…`, contiene `rbd`, empieza por `con `). Si se añaden
 fotos, respetar esa convención de nombres o habrá que colocarlas a mano.
 
-- **El nombre del archivo es el pie de foto.** `edited-photo (29)` se queda sin
-  pie a propósito: es un nombre de exportación, no un texto.
+- **Solo llevan pie las fotos cuyo nombre empieza por «con»**, que son las de
+  personas: el pie sirve para saber con quién está. Las demás van limpias.
+- **El mural se genera con una semilla fija** (`random.Random(7)` en el script
+  de generación), así que el reparto de tamaños y alturas sale igual en cada
+  regeneración. Cinco tamaños, de `--xs` a `--xl`, con 4,2× entre la menor y
+  la mayor: ese rango es la diferencia entre una tira de fotos y un mural.
+- **El desplazamiento vertical de cada foto nunca pasa de `(46 − alto/2)` svh.**
+  Por eso las pequeñas se van a los extremos y las grandes se quedan cerca del
+  centro: así ninguna se sale del pin, midan lo que midan.
+- **Cada foto declara su proporción en `--ar`** y el `min()` del alto lleva un
+  tercer término, `90vw / var(--ar)`, que limita la ANCHURA. Sin él, una foto
+  apaisada de las grandes se salía de la pantalla en móvil: 421 px de ancho en
+  un móvil de 390.
 - **La transición «sube tapando» son dos piezas que van juntas:** la sección
   que sube lleva `data-sube` (margen negativo de una pantalla, fondo opaco y
   `--capa` mayor) y **la de debajo lleva `data-solape`**, que le añade una

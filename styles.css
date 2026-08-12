@@ -524,9 +524,25 @@ a.card:hover .card__cta::after { width: 2.6rem; }
   will-change: transform;
 }
 .foto img { display: block; height: 100%; width: auto; max-width: none; }
-.foto--pq  { height: min(38svh, 42vw); }
-.foto--med { height: min(52svh, 58vw); }
-.foto--gr  { height: min(68svh, 76vw); }
+
+/* Cinco tamaños con mucho recorrido entre el menor y el mayor: es la
+   diferencia entre una tira de fotos y un mural. El desplazamiento vertical
+   (--y, en svh) lo reparte el generador, y nunca pasa de (46 − alto/2): por
+   eso las pequeñas se van a los extremos y las grandes se quedan cerca del
+   centro sin salirse nunca del pin. */
+/* El tercer término del min() es el que limita la ANCHURA: --ar es la
+   proporción real de cada imagen, así que 90vw/--ar es la altura a la que
+   esa foto mediría 90vw de ancho. Sin él, una foto apaisada de las grandes
+   se salía de la pantalla en móvil (421 px de ancho en un móvil de 390). */
+.foto--xs  { height: min(20svh, 30vw, calc(90vw / var(--ar, 1))); }
+.foto--pq  { height: min(32svh, 42vw, calc(90vw / var(--ar, 1))); }
+.foto--med { height: min(46svh, 56vw, calc(90vw / var(--ar, 1))); }
+.foto--gr  { height: min(62svh, 72vw, calc(90vw / var(--ar, 1))); }
+.foto--xl  { height: min(76svh, 88vw, calc(90vw / var(--ar, 1))); }
+
+/* Aire extra a la izquierda de algunas fotos: los huecos irregulares son lo
+   que rompe el ritmo de tira y crea grupos y respiros. */
+.foto { margin-inline-start: var(--sep, 0); }
 
 /* El pie aparece al pasar la foto por el centro y se va al salir: la
    opacidad la escribe app.js en --cap a partir de esa distancia. */
@@ -616,6 +632,15 @@ a.card:hover .card__cta::after { width: 2.6rem; }
   .card--cuad-med { width: 68vw; height: auto; }
   .card--cuad     { width: 76vw; height: auto; }
   .card--cuad-gr  { width: 84vw; height: auto; }
+
+  /* En una pantalla estrecha el rango de tamaños se comprime: con el reparto
+     de escritorio, una foto vertical de las pequeñas se quedaba en 70 px de
+     ancho y no se veía nada. */
+  .foto--xs  { height: min(28svh, 38vw, calc(90vw / var(--ar, 1))); }
+  .foto--pq  { height: min(38svh, 50vw, calc(90vw / var(--ar, 1))); }
+  .foto--med { height: min(50svh, 64vw, calc(90vw / var(--ar, 1))); }
+  .foto--gr  { height: min(62svh, 78vw, calc(90vw / var(--ar, 1))); }
+  .foto--xl  { height: min(74svh, 92vw, calc(90vw / var(--ar, 1))); }
   /* En una columna, cerrar de lado a lado se lee como un temblor. */
   [data-cierre] { --cx: 0px !important; }
   .hero__meta { flex-direction: column; align-items: flex-start; gap: var(--pad-small); }
