@@ -77,6 +77,33 @@ apaño razonable mientras no haya cobros; cuando los haya, lo que toca es servir
 el PDF desde un backend con enlaces caducables por compra, y entonces esta
 clave compartida sobra.
 
+## La galería
+
+Tres bandas horizontales encadenadas, cada una con su dirección: `breve
+espacio` y sueltas → izquierda, `RBD` → derecha, `con …` → izquierda. Las 58
+fotos salen de `Galeria marcel/` y el reparto es automático por el nombre del
+archivo (`breve espacio…`, contiene `rbd`, empieza por `con `). Si se añaden
+fotos, respetar esa convención de nombres o habrá que colocarlas a mano.
+
+- **El nombre del archivo es el pie de foto.** `edited-photo (29)` se queda sin
+  pie a propósito: es un nombre de exportación, no un texto.
+- **La transición «sube tapando» son dos piezas que van juntas:** la sección
+  que sube lleva `data-sube` (margen negativo de una pantalla, fondo opaco y
+  `--capa` mayor) y **la de debajo lleva `data-solape`**, que le añade una
+  pantalla de altura para que su pin aguante quieto mientras la tapan. Si se
+  añade una banda y se olvida el `data-solape` de la anterior, esa se despina a
+  media transición y se ve el salto.
+- **`data-ritmo` marca cuántos píxeles de foto avanzan por píxel de scroll.**
+  La trayectoria va a 1 (seis tarjetas, paso deliberado). La galería va a 3
+  porque son 58 fotos: a 1:1 la página entera pedía 52 pantallas de scroll;
+  con ritmo 3 se queda en 27.
+- **Las fotos no se recortan nunca:** se fija el alto y el ancho lo pone la
+  propia imagen (`height: 100%; width: auto`). Con material de proporciones
+  mezcladas es la única forma de que ninguna pierda nada. Medido: 0%.
+- **El orden de las bandas hacia la derecha se invierte en el CSS**
+  (`flex-direction: row-reverse`), no en el HTML. Así la primera foto del
+  documento sigue siendo la primera que se ve, vaya la banda hacia donde vaya.
+
 ## Decisiones que no hay que deshacer
 
 - **El cambio de tema es instantáneo, sin desvanecido.** Está documentado en

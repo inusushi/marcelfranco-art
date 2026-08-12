@@ -427,21 +427,6 @@ a.card:hover .card__cta::after { width: 2.6rem; }
    interlineado, para que las pausas se lean como pausas. */
 .prosa { display: grid; gap: var(--pad-small); }
 
-/* El tríptico va en columna aunque quepa en una línea: el ritmo de las tres
-   frases es lo que cuenta, no el ahorro de espacio. */
-.prosa__triptico { display: grid; gap: 0.35rem; color: var(--fg); }
-.prosa__triptico em {
-  font-family: var(--ff-display); font-style: normal;
-  color: var(--fg-dim);
-}
-
-.prosa__cierre {
-  font-family: var(--ff-display); font-size: var(--t-h4);
-  line-height: 1.4; color: var(--fg); max-width: 34ch;
-  padding-top: var(--pad-mini);
-  border-top: 1px solid var(--line);
-}
-
 .stack { display: grid; gap: var(--pad-med); align-content: start; }
 .stack--sm { gap: var(--pad-small); }
 .frame { border-radius: var(--r-med); overflow: hidden; border: 1px solid var(--line); background: var(--carbon-2); }
@@ -502,6 +487,58 @@ a.card:hover .card__cta::after { width: 2.6rem; }
   color: var(--cobre); font-variant-numeric: tabular-nums;
 }
 .reglas strong { color: var(--fg); font-weight: 500; }
+
+/* ---------- Galería ----------
+   Tres bandas horizontales que se suceden. Cada una sube tapando a la
+   anterior, que se queda quieta debajo: por eso llevan fondo opaco y una
+   capa (--capa) mayor que la de la anterior. El margen negativo es lo que
+   las hace arrancar una pantalla antes, ya solapadas.
+
+   La sección de debajo necesita `data-solape` para que su pin aguante
+   mientras esta sube; si no, se despina a media transición. */
+[data-sube] {
+  margin-top: -100svh;
+  position: relative; z-index: var(--capa, 1);
+  background: var(--bg);
+}
+
+/* El orden visual se invierte aquí, no en el HTML: así la primera foto del
+   documento sigue siendo la primera que se ve, venga por donde venga. */
+.horiz[data-dir="der"] .horiz__track { flex-direction: row-reverse; }
+
+.galeria .horiz__head { top: 7%; }
+.galeria__titulo {
+  font-family: var(--ff-display); font-size: var(--t-h3); line-height: 1;
+}
+
+/* Las fotos NO se recortan: se fija el alto y el ancho lo pone la propia
+   imagen. Con material de proporciones mezcladas es la única forma de que
+   ninguna pierda nada. */
+.foto {
+  flex: none; position: relative; margin: 0;
+  border-radius: var(--r-med); overflow: hidden;
+  background: var(--carbon-2); border: 1px solid var(--line);
+  align-self: center;
+  transform: translate3d(var(--px, 0), var(--y, 0), 0) scale(var(--ps, 1));
+  opacity: var(--pe, 1);
+  will-change: transform;
+}
+.foto img { display: block; height: 100%; width: auto; max-width: none; }
+.foto--pq  { height: min(38svh, 42vw); }
+.foto--med { height: min(52svh, 58vw); }
+.foto--gr  { height: min(68svh, 76vw); }
+
+/* El pie aparece al pasar la foto por el centro y se va al salir: la
+   opacidad la escribe app.js en --cap a partir de esa distancia. */
+.foto__pie {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 2.2rem var(--pad-mini) var(--pad-mini);
+  font-size: var(--t-eyebrow); letter-spacing: 0.1em;
+  color: var(--marfil); text-transform: uppercase;
+  background: linear-gradient(to top, color-mix(in oklab, var(--carbon) 88%, transparent), transparent);
+  opacity: var(--cap, 0); transition: opacity 0.45s var(--ease);
+  pointer-events: none;
+}
 
 /* ---------- Fechas ---------- */
 .fechas { display: grid; gap: var(--gap); grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); }
@@ -614,7 +651,10 @@ a.card:hover .card__cta::after { width: 2.6rem; }
   .horiz__sticky { position: static; height: auto; }
   .horiz__track { overflow-x: auto; transform: none !important; }
   .nota-fly { display: none; }
-  .card { transform: none !important; opacity: 1 !important; }
+  .card, .foto { transform: none !important; opacity: 1 !important; }
+  /* Sin solape ni pin, el margen negativo se comería la sección anterior. */
+  [data-sube] { margin-top: 0; }
+  .foto__pie { opacity: 1 !important; }
   [data-cierre] { transform: none !important; }
   .horiz__fondo { display: none; }
 }

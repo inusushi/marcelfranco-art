@@ -432,11 +432,30 @@
            pero el carril se maqueta sin ella. Con innerWidth el recorrido
            salía ~15 px corto y la última tarjeta nunca acababa de entrar. */
         var travel = Math.max(0, track.scrollWidth - document.documentElement.clientWidth);
-        section.style.height = (innerHeight + travel) + 'px';
+
+        /* Una pantalla de más al final si la siguiente sección sube por
+           encima: durante ese tramo el avance ya está al 100% y el pin solo
+           tiene que aguantar quieto mientras la otra lo tapa. */
+        var solape = section.hasAttribute('data-solape') ? innerHeight : 0;
+
+        /* Cuántos píxeles de foto avanzan por cada píxel de scroll. En la
+           trayectoria vale 1 (seis tarjetas, paso deliberado). En la galería
+           son 58 fotos: a 1:1 harían falta 36 pantallas solo para pasarlas,
+           así que va más rápido. */
+        var ritmo = parseFloat(section.getAttribute('data-ritmo')) || 1;
+        var recorridoScroll = travel / ritmo;
+        section.style.height = (innerHeight + recorridoScroll + solape) + 'px';
         instances.push({
           section: section, track: track,
           bar: section.querySelector('.horiz__progress i'),
-          travel: travel, anchoMedido: track.scrollWidth,
+          travel: travel, recorridoScroll: recorridoScroll,
+          anchoMedido: track.scrollWidth,
+          /* En las bandas que avanzan hacia la derecha el carril arranca ya
+             desplazado del todo y vuelve a cero. El orden de las fotos no se
+             invierte aquí sino en el CSS, con flex-direction: row-reverse:
+             así la primera del HTML sigue siendo la primera que se ve. */
+          derecha: section.getAttribute('data-dir') === 'der',
+          pies: [].slice.call(track.querySelectorAll('.foto__pie')),
           cards: [].slice.call(track.querySelectorAll('[data-z]')),
           fondo: [].slice.call(section.querySelectorAll('[data-parallax]'))
         });
@@ -454,11 +473,23 @@
 
       instances.forEach(function (o) {
         var rect = o.section.getBoundingClientRect();
-        var p = o.travel === 0 ? 0 : Math.min(1, Math.max(0, -rect.top / o.travel));
-        var desliz = -p * o.travel;
+        var p = o.recorridoScroll === 0 ? 0 : Math.min(1, Math.max(0, -rect.top / o.recorridoScroll));
+        var desliz = o.derecha ? -o.travel * (1 - p) : -p * o.travel;
 
         o.track.style.transform = 'translate3d(' + desliz + 'px,0,0)';
         if (o.bar) o.bar.style.width = (p * 100) + '%';
+
+        /* Pie de foto: aparece cuando la foto pasa por el centro de la
+           pantalla y se va al salir. Se calcula sobre la posición ya
+           pintada, así que recoge también el desfase del parallax. */
+        if (o.pies.length) {
+          var mitad = document.documentElement.clientWidth / 2;
+          o.pies.forEach(function (pie) {
+            var fr = pie.parentNode.getBoundingClientRect();
+            var d = Math.abs((fr.left + fr.right) / 2 - mitad) / mitad;
+            pie.style.setProperty('--cap', Math.max(0, 1 - d * 1.6).toFixed(2));
+          });
+        }
 
         /* Profundidad. Cada tarjeta se adelanta o se retrasa respecto al
            carril según su data-z: las del fondo se quedan atrás, las del
