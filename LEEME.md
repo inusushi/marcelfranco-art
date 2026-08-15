@@ -134,6 +134,32 @@ sobre un fondo en movimiento cualquier transparencia hace bailar el precio— y
 el texto suelto lleva sombra para despegarse cuando por detrás pasa la
 guitarra clara. El párrafo va a 76ch en vez de 60ch.
 
+## SEO y rendimiento
+
+- **Los titulares partidos perdían los espacios.** `splitLines` unía las líneas
+  con `join('')`, así que el `textContent` salía pegado: el `<h1>` que indexaba
+  Google decía «MarcelFranco» y los `<h2>`, «Donde lamúsicacomienza». Los
+  lectores de pantalla no se enteraban —leen el `.sr` de al lado— pero Google
+  renderiza el JavaScript. Va con `join(' ')`; el espacio entre bloques no se
+  pinta, así que no cambia nada en pantalla. **No volver a `join('')`.**
+- **Los datos estructurados (JSON-LD) solo declaran lo que está en la página.**
+  Si cambian los precios de las clases, el del libro o las redes, hay que
+  tocarlos también ahí: un precio que no coincide con la página es peor que no
+  declararlo.
+- **Tres sitios llevan la URL absoluta a mano** y hay que cambiarlos a la vez
+  al mudar de dominio: las etiquetas `og:`/`twitter:`, el `canonical`, y
+  `robots.txt` + `sitemap.xml`. Una canonical apuntando al dominio viejo le
+  dice a Google que ignore el nuevo.
+- **Los dos videos se cargan cuando la página ya está lista** y el navegador
+  ocioso, no durante la carga. El del hero pesaba el 94% de la página: la
+  primera carga pasó de 3.091 KB a 132 KB. Si se vuelven a enganchar en el
+  arranque, se pierde justo eso.
+- **Historial de Git:** se purgaron 10 blobs de versiones viejas de los videos
+  (22 MB). El PDF del libro **no** se puede sacar del historial mientras se
+  sirva desde el repo: entró una sola vez, así que quitarlo y volver a añadirlo
+  no ahorra nada. Hay un respaldo del historial previo en
+  `%TEMP%\marcel-respaldo.bundle`.
+
 ## Decisiones que no hay que deshacer
 
 - **El cambio de tema es instantáneo, sin desvanecido.** Está documentado en
