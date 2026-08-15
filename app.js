@@ -302,6 +302,19 @@
      los megas si el usuario pidió movimiento reducido: en ese caso
      se queda el poster, que ya es una <img> normal.
      ============================================================ */
+  /* Espera a que la página esté pintada y el navegador ocioso antes de pedir
+     un video. Sin esto, el hero se lleva 1,7 MB por delante de la hoja de
+     estilos y del resto de la página: la primera pintura pasaba de ~190 KB a
+     3 MB. El póster ya está puesto, así que no se ve un hueco. */
+  function cuandoSobreTiempo(fn) {
+    function luego() {
+      if (window.requestIdleCallback) requestIdleCallback(fn, { timeout: 1500 });
+      else setTimeout(fn, 200);
+    }
+    if (document.readyState === 'complete') luego();
+    else addEventListener('load', luego);
+  }
+
   function initHeroVideo() {
     var v = document.querySelector('.hero__video');
     if (!v || reduce) return;
@@ -478,11 +491,17 @@
       current.push(w.textContent);
     });
 
+    /* Las líneas se unen CON un espacio. Con join('') el titular se quedaba
+       sin separación entre líneas y su textContent salía pegado: el <h1>
+       decía «MarcelFranco» y los <h2>, «Donde lamúsicacomienza». Los lectores
+       de pantalla no se enteraban (leen el .sr de al lado), pero Google
+       renderiza el JavaScript e indexaba justo eso. El espacio entre bloques
+       no se pinta, así que no cambia nada en pantalla. */
     el.innerHTML = lines.map(function (line, i) {
       return '<span class="line" style="--i:' + i + '">' +
              '<span class="line__in">' + line.join(' ') + '</span>' +
              '<span class="line__bar"></span></span>';
-    }).join('');
+    }).join(' ');
   }
 
   var revealObserver = new IntersectionObserver(function (entries) {
@@ -750,9 +769,10 @@
     initFormulario();
     initLibro();
     initNotas();
-    initHeroVideo();
     initCarrete();
-    initVideoFondo();
+
+    /* Los dos videos son decoración: entran cuando ya está todo lo demás. */
+    cuandoSobreTiempo(function () { initHeroVideo(); initVideoFondo(); });
 
     initLenis();
     initSplits();

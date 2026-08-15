@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# El libro va cifrado, pero no hace falta que los buscadores lo rastreen ni
+# lo ofrezcan como resultado suelto: la venta pasa por la página.
+Disallow: /media/un-viaje-por-la-luz.pdf
+
+Sitemap: https://inusushi.github.io/marcelfranco-art/sitemap.xml

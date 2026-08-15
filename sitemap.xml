@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Una sola página: el sitio es de scroll continuo y las secciones son
+     anclas, no URLs. Si algún día alguna sección pasa a página propia, se
+     añade aquí. Al cambiar de dominio hay que actualizar esta URL y la de
+     robots.txt. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://inusushi.github.io/marcelfranco-art/</loc>
+    <lastmod>2026-08-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

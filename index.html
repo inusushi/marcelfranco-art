@@ -4,8 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Marcel Franco — Cantautor, compositor y guitarrista</title>
-<meta name="description" content="Marcel Franco, cantautor, compositor, guitarrista y productor mexicano. Clases de guitarra, contrataciones para eventos y música original.">
+<!-- Entre 120 y 160 caracteres: por debajo se desaprovecha, por encima Google
+     la corta a media frase. Esta mide 154. -->
+<meta name="description" content="Marcel Franco, cantautor y guitarrista mexicano formado en Bellas Artes. Clases de guitarra, música en vivo para eventos y composición por encargo.">
 <meta name="theme-color" content="#171515">
+
+<!-- Si el sitio cambia de dominio hay que actualizar esta línea igual que
+     og:url: una canonical apuntando al dominio viejo le dice a Google que
+     ignore el nuevo. -->
+<link rel="canonical" href="https://inusushi.github.io/marcelfranco-art/">
 
 <link rel="icon" href="media/favicon.png" sizes="180x180">
 <link rel="apple-touch-icon" href="media/favicon.png">
@@ -32,6 +39,66 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+
+<!-- Datos estructurados. Es lo que permite a Google mostrar a Marcel como
+     artista (foto, enlaces a sus plataformas) en vez de como una web más.
+     Solo se declara aquí lo que ya está en la página: nada inventado.
+     Si cambian los precios o las redes, hay que tocarlo también aquí. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://inusushi.github.io/marcelfranco-art/#marcel",
+      "name": "Marcel Franco",
+      "alternateName": "Marcel Ernesto Franco González",
+      "jobTitle": "Cantautor, compositor, guitarrista y productor",
+      "description": "Cantautor, compositor, guitarrista y productor mexicano con más de dos décadas de trayectoria y formación en el Instituto Nacional de Bellas Artes.",
+      "url": "https://inusushi.github.io/marcelfranco-art/",
+      "image": "https://inusushi.github.io/marcelfranco-art/media/og.jpg",
+      "email": "marcelfrancooficial@gmail.com",
+      "alumniOf": { "@type": "EducationalOrganization", "name": "Instituto Nacional de Bellas Artes" },
+      "address": { "@type": "PostalAddress", "addressLocality": "Ciudad de México", "addressCountry": "MX" },
+      "sameAs": [
+        "https://www.instagram.com/marcelfrancooficial/",
+        "https://youtube.com/@marcelfrancooficial",
+        "https://www.tiktok.com/@marcelfrancooficial",
+        "https://open.spotify.com/playlist/6IhIejzimCJKFJRkDBhgsC"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "url": "https://inusushi.github.io/marcelfranco-art/",
+      "name": "Marcel Franco",
+      "inLanguage": "es-MX",
+      "about": { "@id": "https://inusushi.github.io/marcelfranco-art/#marcel" }
+    },
+    {
+      "@type": "Book",
+      "name": "Un viaje por la luz",
+      "author": { "@id": "https://inusushi.github.io/marcelfranco-art/#marcel" },
+      "bookEdition": "2ª edición",
+      "bookFormat": "https://schema.org/EBook",
+      "inLanguage": "es",
+      "numberOfPages": 41,
+      "image": "https://inusushi.github.io/marcelfranco-art/media/libro-portada.webp",
+      "offers": { "@type": "Offer", "price": "250", "priceCurrency": "MXN", "availability": "https://schema.org/InStock" }
+    },
+    {
+      "@type": "Service",
+      "name": "Clases de guitarra",
+      "serviceType": "Clases de guitarra para principiantes e intermedios",
+      "provider": { "@id": "https://inusushi.github.io/marcelfranco-art/#marcel" },
+      "areaServed": { "@type": "City", "name": "Ciudad de México" },
+      "offers": [
+        { "@type": "Offer", "name": "Online por Zoom", "price": "1000", "priceCurrency": "MXN" },
+        { "@type": "Offer", "name": "Presencial en CDMX", "price": "3200", "priceCurrency": "MXN" }
+      ]
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
