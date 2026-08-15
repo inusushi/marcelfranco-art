@@ -42,9 +42,8 @@ el número esté activo en WhatsApp solo lo confirma un envío real.
 
 ## Pendientes de Marcel
 
-- **PDF del libro** (en corrección de estilo). La sección está en
-  "Próximamente"; para activar la venta, cambia el texto del botón y su
-  mensaje en `app.js` → `MENSAJES.libro`.
+- ~~PDF del libro.~~ **Entregado** (07/08/2026): se vende cifrado, ver más
+  abajo.
 - ~~Portada del libro en alta.~~ **Entregada** (04/08/2026):
   `media/libro-portada.webp`.
 - **Flyers y fechas reales.** `fechas.js` trae dos de ejemplo — hay que
@@ -79,41 +78,52 @@ clave compartida sobra.
 
 ## La galería
 
-Tres bandas horizontales encadenadas, cada una con su dirección: `breve
-espacio` y sueltas → izquierda, `RBD` → derecha, `con …` → izquierda. Las 58
-fotos salen de `Galeria marcel/` y el reparto es automático por el nombre del
-archivo (`breve espacio…`, contiene `rbd`, empieza por `con `). Si se añaden
-fotos, respetar esa convención de nombres o habrá que colocarlas a mano.
+Ya no son tres bandas fijadas que se recorren con el scroll de la página: eso
+costaba **18 pantallas de scroll** solo para pasar las fotos y dejaba la venta
+muy lejos. Ahora hay dos piezas:
 
-- **Solo llevan pie las fotos cuyo nombre empieza por «con»**, que son las de
-  personas: el pie sirve para saber con quién está. Las demás van limpias.
-- **El mural se genera con una semilla fija** (`random.Random(7)` en el script
-  de generación), así que el reparto de tamaños y alturas sale igual en cada
-  regeneración. Cinco tamaños, de `--xs` a `--xl`, con 4,2× entre la menor y
-  la mayor: ese rango es la diferencia entre una tira de fotos y un mural.
-- **El desplazamiento vertical de cada foto nunca pasa de `(46 − alto/2)` svh.**
-  Por eso las pequeñas se van a los extremos y las grandes se quedan cerca del
-  centro: así ninguna se sale del pin, midan lo que midan.
-- **Cada foto declara su proporción en `--ar`** y el `min()` del alto lleva un
-  tercer término, `90vw / var(--ar)`, que limita la ANCHURA. Sin él, una foto
-  apaisada de las grandes se salía de la pantalla en móvil: 421 px de ancho en
-  un móvil de 390.
-- **La transición «sube tapando» son dos piezas que van juntas:** la sección
-  que sube lleva `data-sube` (margen negativo de una pantalla, fondo opaco y
-  `--capa` mayor) y **la de debajo lleva `data-solape`**, que le añade una
-  pantalla de altura para que su pin aguante quieto mientras la tapan. Si se
-  añade una banda y se olvida el `data-solape` de la anterior, esa se despina a
-  media transición y se ve el salto.
-- **`data-ritmo` marca cuántos píxeles de foto avanzan por píxel de scroll.**
-  La trayectoria va a 1 (seis tarjetas, paso deliberado). La galería va a 3
-  porque son 58 fotos: a 1:1 la página entera pedía 52 pantallas de scroll;
-  con ritmo 3 se queda en 27.
-- **Las fotos no se recortan nunca:** se fija el alto y el ancho lo pone la
-  propia imagen (`height: 100%; width: auto`). Con material de proporciones
-  mezcladas es la única forma de que ninguna pierda nada. Medido: 0%.
-- **El orden de las bandas hacia la derecha se invierte en el CSS**
-  (`flex-direction: row-reverse`), no en el HTML. Así la primera foto del
-  documento sigue siendo la primera que se ve, vaya la banda hacia donde vaya.
+1. **El abanico**, una pantalla con seis tarjetas en arco, una por sección.
+   El nombre va **fuera** de la tarjeta, debajo.
+2. **El carrete**, una capa aparte con **las 58 fotos seguidas**. Se entra por
+   una sección, pero dentro se recorre entero: las secciones son puntos de
+   entrada, no compartimentos. Los atajos de arriba saltan a cada una.
+
+La página pasó de 26 pantallas a 11.
+
+- **Las fotos salen de las subcarpetas de `Galeria marcel/`** y el orden de
+  las secciones está fijado en el script de generación (`ORDEN`). Para añadir
+  fotos, se dejan en su carpeta y se vuelve a generar.
+- **El carrete vive fuera de `<main>`** a propósito: dentro heredaría el
+  apilado y los `transform` de las secciones, y una capa fija dentro de un
+  ancestro transformado se posiciona respecto a ese ancestro, no a la ventana.
+- **`grid-template-columns: minmax(0, 1fr)`, no `1fr`.** Un hijo de grid tiene
+  `min-width: auto`, así que la pista (58 fotos en fila) estiraba la capa
+  entera a 775 px en un móvil de 390 y la barra se salía de la pantalla.
+- **Cada foto declara `--ar` y la imagen lleva `aspect-ratio`.** Sin eso las
+  fotos no ocupan nada hasta cargar, la tira colapsa y los atajos apuntan a
+  posiciones que dejan de existir cuando las imágenes aparecen.
+- **Sin `scroll-snap`:** el imán se peleaba con el salto a cada sección
+  (aterrizaba ~120 px desviado, dejando la marca fuera de campo).
+- **El salto suave solo se usa en distancias cortas.** El carrete mide casi
+  50.000 px: de una punta a otra, un desplazamiento suave tarda segundos y
+  parece que la página se ha colgado.
+- **`atrás` cierra el carrete**, no saca de la página: al abrir se mete una
+  entrada en el historial.
+- **La apertura fuerza un reflujo (`void capa.offsetHeight`) en vez de usar
+  `requestAnimationFrame`.** La transición necesita que el navegador haya
+  calculado el estado inicial, y un rAF puede tardar o no llegar si la
+  pestaña no está componiendo.
+
+## El video de Producción
+
+El de la sección de composición va de fondo, en bucle y sin audio, con el
+mismo montaje que el hero: poster como `<img>` y las fuentes enganchadas
+desde `app.js`, para no bajar los megas con movimiento reducido.
+
+**Las tarjetas de precio dejaron de ser transparentes y el texto ensanchó a
+76ch.** Sobre un video en movimiento, una tarjeta translúcida y un párrafo a
+60ch se perdían; el velo de dos capas y el fondo opaco de las tarjetas son lo
+que mantiene legibles las cifras.
 
 ## Decisiones que no hay que deshacer
 
@@ -138,17 +148,13 @@ fotos, respetar esa convención de nombres o habrá que colocarlas a mano.
     si no coincide con el arranque, se ve un salto al entrar el video.
   - Hubo un primer video (`marcel background web M.mp4`) que se descartó por
     llevar marca de agua de Pika incrustada. No recuperarlo.
-  - **El video lleva un montaje por tramos, no va a velocidad uniforme.**
-    Sobre `Videos Marcel/Video para Hero.mp4`: el primer plano de la mano
-    (0–6 s) va a velocidad normal, el plano del guitarrista (6–17 s) va un
-    25% más rápido, y la placa de texto final (17 s → final) queda intacta.
-    Si se vuelve a codificar desde el original hay que repetir ese montaje o
-    se pierde. El comando está en el historial de git, en el commit
-    «Acelera un 25% el plano del guitarrista».
-- **La foto del hero medía 1280×960**, que es lo que dio el original. En un
-  monitor de 1440 se estira un 11% y en uno de 1920 bastante más. El velo
-  oscuro lo disimula, pero si Marcel encuentra esa toma en resolución mayor,
-  vale la pena sustituirla: es la primera imagen que ve todo el mundo.
+  - **Historial de vídeos del hero**, por si hay que volver atrás: pasó por
+    `Video para Hero.mp4` (que llevaba un montaje por tramos, con el plano
+    del guitarrista acelerado un 25%) y desde el 15/08/2026 vuelve a
+    `Marcel franco hero webM.mp4`, **sin ningún montaje**: se codifica
+    entero y a velocidad normal. El clip de aquel montaje es hoy
+    `Videos Marcel/Video para sección composición.mp4` y vive de fondo en
+    Producción, también sin editar.
 - **El recorrido del pin se mide con `clientWidth`, nunca con `innerWidth`.**
   `innerWidth` incluye la barra de scroll; el carril se maqueta sin ella. Con
   `innerWidth` el recorrido salía ~15 px corto y la última tarjeta no acababa

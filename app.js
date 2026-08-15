@@ -323,6 +323,129 @@
   }
 
   /* ============================================================
+     3-quater. EL CARRETE DE LA GALERÍA
+     Se entra por una sección, pero dentro se recorre el carrete
+     entero: las secciones son puntos de entrada, no compartimentos.
+     ============================================================ */
+  function initCarrete() {
+    var capa = document.querySelector('#carrete');
+    var pista = document.querySelector('#carrete-pista');
+    if (!capa || !pista) return;
+
+    var abierto = false, devolverFoco = null;
+
+    function irA(slug, suave) {
+      var marca = document.getElementById('sec-' + slug);
+      if (!marca) return;
+      var destino = function () { return marca.offsetLeft - pista.clientWidth * 0.08; };
+
+      /* Suave solo en saltos cortos. El carrete mide casi 50.000 px: de una
+         punta a otra, un desplazamiento suave tarda varios segundos y parece
+         que la página se ha colgado. En distancias largas se salta y ya. */
+      var lejos = Math.abs(destino() - pista.scrollLeft) > pista.clientWidth * 2.5;
+      pista.scrollTo({ left: destino(), behavior: (suave && !lejos) ? 'smooth' : 'auto' });
+      marcarAtajo(slug);
+
+      /* Segundo intento al abrir: la primera vez que se muestra la capa, las
+         fotos de esa zona aún no han cargado y el navegador puede recolocar
+         la tira unos píxeles. Sin este ajuste se entra ligeramente descuadrado. */
+      if (!suave) setTimeout(function () { pista.scrollLeft = destino(); }, 120);
+    }
+
+    function marcarAtajo(slug) {
+      capa.querySelectorAll('.carrete__atajo').forEach(function (b) {
+        b.classList.toggle('is-actual', b.getAttribute('data-ir') === slug);
+      });
+    }
+
+    function abrir(slug, deHistorial) {
+      devolverFoco = document.activeElement;
+      capa.hidden = false;
+      /* El scroll del fondo se bloquea con overflow y no con position:fixed:
+         fixed obliga a restaurar el scrollY a mano y, con Lenis por medio,
+         eso deja la página unos píxeles descolocada al cerrar. */
+      document.documentElement.style.overflow = 'hidden';
+
+      /* Reflujo forzado en vez de requestAnimationFrame: la transición de
+         opacidad necesita que el navegador haya calculado el estado inicial,
+         y un rAF puede tardar en llegar (o no llegar) si la pestaña no está
+         componiendo. Leer offsetHeight lo garantiza aquí mismo. */
+      void capa.offsetHeight;
+      capa.classList.add('is-open');
+
+      irA(slug, false);
+      pista.focus({ preventScroll: true });
+      abierto = true;
+      /* Una entrada en el historial para que «atrás» cierre el carrete en
+         vez de sacar al usuario de la página. */
+      if (!deHistorial) history.pushState({ carrete: slug }, '', '#galeria');
+    }
+
+    function cerrar(deHistorial) {
+      if (!abierto) return;
+      abierto = false;
+      capa.classList.remove('is-open');
+      document.documentElement.style.overflow = '';
+      setTimeout(function () { if (!abierto) capa.hidden = true; }, 350);
+      if (devolverFoco && devolverFoco.focus) devolverFoco.focus();
+      if (!deHistorial && history.state && history.state.carrete) history.back();
+    }
+
+    document.querySelectorAll('[data-abrir]').forEach(function (b) {
+      b.addEventListener('click', function () { abrir(b.getAttribute('data-abrir')); });
+    });
+    capa.querySelectorAll('[data-ir]').forEach(function (b) {
+      b.addEventListener('click', function () { irA(b.getAttribute('data-ir'), true); });
+    });
+    capa.querySelector('.carrete__cerrar').addEventListener('click', function () { cerrar(); });
+
+    addEventListener('keydown', function (e) {
+      if (!abierto) return;
+      if (e.key === 'Escape') cerrar();
+      if (e.key === 'ArrowRight') pista.scrollBy({ left: pista.clientWidth * 0.7, behavior: 'smooth' });
+      if (e.key === 'ArrowLeft') pista.scrollBy({ left: -pista.clientWidth * 0.7, behavior: 'smooth' });
+    });
+
+    addEventListener('popstate', function () {
+      if (abierto) cerrar(true);
+    });
+
+    /* Una rueda de ratón solo da deltaY: sin esto, dentro del carrete no se
+       movería nada. Los trackpads que ya mandan deltaX se dejan en paz. */
+    pista.addEventListener('wheel', function (e) {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      e.preventDefault();
+      pista.scrollLeft += e.deltaY;
+    }, { passive: false });
+
+    /* Qué sección se está viendo, para resaltar su atajo. */
+    var marcas = [].slice.call(capa.querySelectorAll('.carrete__marca'));
+    pista.addEventListener('scroll', function () {
+      var x = pista.scrollLeft + pista.clientWidth * 0.1, actual = marcas[0];
+      marcas.forEach(function (m) { if (m.offsetLeft <= x) actual = m; });
+      if (actual) marcarAtajo(actual.getAttribute('data-seccion'));
+    }, { passive: true });
+  }
+
+  /* Video de fondo de Producción. Mismo trato que el del hero: las fuentes
+     se enganchan aquí para no descargarlas con movimiento reducido. */
+  function initVideoFondo() {
+    var v = document.querySelector('.produccion__video');
+    if (!v || reduce) return;
+    [['data-webm', 'video/webm'], ['data-mp4', 'video/mp4']].forEach(function (par) {
+      var url = v.getAttribute(par[0]);
+      if (!url) return;
+      var s = document.createElement('source');
+      s.src = url; s.type = par[1];
+      v.appendChild(s);
+    });
+    v.addEventListener('playing', function () { v.classList.add('is-playing'); });
+    v.load();
+    var p = v.play();
+    if (p && p.catch) p.catch(function () { /* sin autoplay: se queda el poster */ });
+  }
+
+  /* ============================================================
      4. MOTOR VISUAL
      ============================================================ */
   function initLenis() {
@@ -450,12 +573,7 @@
           bar: section.querySelector('.horiz__progress i'),
           travel: travel, recorridoScroll: recorridoScroll,
           anchoMedido: track.scrollWidth,
-          /* En las bandas que avanzan hacia la derecha el carril arranca ya
-             desplazado del todo y vuelve a cero. El orden de las fotos no se
-             invierte aquí sino en el CSS, con flex-direction: row-reverse:
-             así la primera del HTML sigue siendo la primera que se ve. */
           derecha: section.getAttribute('data-dir') === 'der',
-          pies: [].slice.call(track.querySelectorAll('.foto__pie')),
           cards: [].slice.call(track.querySelectorAll('[data-z]')),
           fondo: [].slice.call(section.querySelectorAll('[data-parallax]'))
         });
@@ -478,18 +596,6 @@
 
         o.track.style.transform = 'translate3d(' + desliz + 'px,0,0)';
         if (o.bar) o.bar.style.width = (p * 100) + '%';
-
-        /* Pie de foto: aparece cuando la foto pasa por el centro de la
-           pantalla y se va al salir. Se calcula sobre la posición ya
-           pintada, así que recoge también el desfase del parallax. */
-        if (o.pies.length) {
-          var mitad = document.documentElement.clientWidth / 2;
-          o.pies.forEach(function (pie) {
-            var fr = pie.parentNode.getBoundingClientRect();
-            var d = Math.abs((fr.left + fr.right) / 2 - mitad) / mitad;
-            pie.style.setProperty('--cap', Math.max(0, 1 - d * 1.6).toFixed(2));
-          });
-        }
 
         /* Profundidad. Cada tarjeta se adelanta o se retrasa respecto al
            carril según su data-z: las del fondo se quedan atrás, las del
@@ -645,6 +751,8 @@
     initLibro();
     initNotas();
     initHeroVideo();
+    initCarrete();
+    initVideoFondo();
 
     initLenis();
     initSplits();

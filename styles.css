@@ -376,6 +376,39 @@ a.card:hover .card__cta::after { width: 2.6rem; }
 /* ---------- Producción musical ---------- */
 .planes--tres { grid-template-columns: repeat(3, 1fr); }
 
+.produccion { position: relative; isolation: isolate; overflow: hidden; }
+.produccion > *:not(.produccion__media) { position: relative; z-index: 1; }
+.produccion__media { position: absolute; inset: 0; z-index: 0; }
+.produccion__media img, .produccion__video {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+}
+.produccion__video { opacity: 0; transition: opacity 0.8s var(--ease); }
+.produccion__video.is-playing { opacity: 1; }
+
+/* Dos capas de velo: una opaca general y un degradado más denso abajo, donde
+   están las tarjetas. Sin esto el precio no se lee sobre la imagen en
+   movimiento; con la guitarra clara del video, el contraste caía por debajo
+   de lo legible justo en las cifras. */
+.produccion__velo {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom, color-mix(in oklab, var(--carbon) 72%, transparent), color-mix(in oklab, var(--carbon) 92%, transparent) 60%),
+    color-mix(in oklab, var(--carbon) 40%, transparent);
+}
+
+/* Las tarjetas dejan de ser transparentes: sobre el video se perdían. */
+.produccion .plan {
+  background: color-mix(in oklab, var(--carbon-2) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-color: color-mix(in oklab, var(--cobre) 28%, var(--line));
+  box-shadow: 0 1.5rem 3rem color-mix(in oklab, #000 45%, transparent);
+}
+.produccion .plan--destacado {
+  border-color: var(--cobre);
+  box-shadow: 0 1.5rem 3rem color-mix(in oklab, #000 55%, transparent),
+              0 0 0 1px color-mix(in oklab, var(--cobre) 45%, transparent);
+}
+
 /* ---------- Desbloqueo del libro ---------- */
 .unlock {
   margin-top: var(--pad-small); padding: var(--pad-small);
@@ -488,72 +521,162 @@ a.card:hover .card__cta::after { width: 2.6rem; }
 }
 .reglas strong { color: var(--fg); font-weight: 500; }
 
-/* ---------- Galería ----------
-   Tres bandas horizontales que se suceden. Cada una sube tapando a la
-   anterior, que se queda quieta debajo: por eso llevan fondo opaco y una
-   capa (--capa) mayor que la de la anterior. El margen negativo es lo que
-   las hace arrancar una pantalla antes, ya solapadas.
-
-   La sección de debajo necesita `data-solape` para que su pin aguante
-   mientras esta sube; si no, se despina a media transición. */
+/* ---------- Galería: abanico de secciones ----------
+   Seis tarjetas en arco. El ángulo y la caída de cada una vienen del HTML
+   (--ang, --baja) para que el centro quede alto y los extremos caídos. Al
+   pasar por encima, la de debajo se endereza y sube: el arco se abre. */
 [data-sube] {
   margin-top: -100svh;
   position: relative; z-index: var(--capa, 1);
   background: var(--bg);
 }
 
-/* El orden visual se invierte aquí, no en el HTML: así la primera foto del
-   documento sigue siendo la primera que se ve, venga por donde venga. */
-.horiz[data-dir="der"] .horiz__track { flex-direction: row-reverse; }
+.abanico {
+  display: flex; justify-content: center; align-items: flex-start;
+  gap: clamp(0.4rem, 1.2vw, 1.2rem); flex-wrap: wrap;
+  padding-top: 2rem;
+}
+.abanico__carta {
+  flex: 0 0 auto; width: clamp(9rem, 14vw, 13rem);
+  background: none; border: 0; padding: 0; cursor: pointer;
+  color: inherit; font: inherit; text-align: center;
+  display: grid; gap: 0.75rem; justify-items: center;
+  transform: rotate(var(--ang)) translateY(var(--baja));
+  transition: transform 0.5s var(--ease);
+}
+.abanico__carta:hover, .abanico__carta:focus-visible {
+  transform: rotate(0deg) translateY(calc(var(--baja) - 1.2rem));
+  outline: none;
+}
+.abanico__foto {
+  display: block; width: 100%; aspect-ratio: 3 / 4; overflow: hidden;
+  border-radius: var(--r-med); border: 1px solid var(--line);
+  background: var(--carbon-2);
+  box-shadow: 0 1rem 2.5rem color-mix(in oklab, #000 45%, transparent);
+}
+.abanico__foto img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease); }
+.abanico__carta:hover .abanico__foto img { transform: scale(1.06); }
+.abanico__carta:focus-visible .abanico__foto { outline: 2px solid var(--cobre); outline-offset: 3px; }
 
-.galeria .horiz__head { top: 7%; }
-.galeria__titulo {
-  font-family: var(--ff-display); font-size: var(--t-h3); line-height: 1;
+/* El nombre va FUERA de la tarjeta, debajo, no encima de la foto. */
+.abanico__nombre { font-family: var(--ff-display); font-size: var(--t-h4); line-height: 1.1; }
+.abanico__cuenta {
+  font-size: var(--t-eyebrow); text-transform: uppercase;
+  letter-spacing: 0.18em; color: var(--cobre);
 }
 
-/* Las fotos NO se recortan: se fija el alto y el ancho lo pone la propia
-   imagen. Con material de proporciones mezcladas es la única forma de que
-   ninguna pierda nada. */
-.foto {
-  flex: none; position: relative; margin: 0;
+/* ---------- Galería: el carrete ----------
+   Capa aparte, fuera de <main>. Todas las fotos seguidas en una sola tira:
+   se entra por una sección pero se puede recorrer el carrete entero. */
+.carrete {
+  position: fixed; inset: 0; z-index: 200;
+  background: color-mix(in oklab, var(--carbon) 96%, transparent);
+  /* minmax(0, 1fr) y no 1fr: por defecto un hijo de grid tiene min-width
+     auto, así que la pista (58 fotos en fila) estiraba la capa entera a
+     775 px en un móvil de 390 y la barra superior se salía de la pantalla. */
+  display: grid; grid-template-rows: auto 1fr auto; grid-template-columns: minmax(0, 1fr);
+  opacity: 0; transition: opacity 0.35s var(--ease);
+}
+.carrete.is-open { opacity: 1; }
+.carrete[hidden] { display: none; }
+
+.carrete__barra {
+  display: flex; align-items: center; gap: var(--gap);
+  padding: var(--pad-mini) max(var(--container), 4vw);
+  border-bottom: 1px solid var(--line);
+}
+.carrete__atajos { display: flex; gap: 0.4rem; overflow-x: auto; flex: 1; scrollbar-width: none; }
+.carrete__atajos::-webkit-scrollbar { display: none; }
+.carrete__atajo {
+  flex: none; background: none; border: 1px solid var(--line);
+  border-radius: var(--r-pill); color: var(--fg-dim);
+  font: inherit; font-size: var(--t-small); padding: 0.4rem 0.9rem;
+  cursor: pointer; white-space: nowrap;
+  transition: color 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+.carrete__atajo:hover, .carrete__atajo.is-actual { color: var(--fg); border-color: var(--cobre); }
+
+.carrete__cerrar {
+  flex: none; width: 2.75rem; height: 2.75rem; border-radius: 50%;
+  background: none; border: 1px solid var(--line); cursor: pointer;
+  display: grid; place-items: center;
+}
+.carrete__cerrar svg { width: 1.1rem; height: 1.1rem; fill: none; stroke: var(--fg); stroke-width: 1.6; }
+.carrete__cerrar:hover { border-color: var(--cobre); }
+
+/* Scroll horizontal nativo: funciona con trackpad, arrastre y teclado sin
+   inventar nada. La rueda vertical la traduce app.js. */
+.carrete__pista {
+  display: flex; align-items: center; gap: clamp(1rem, 3vw, 3rem);
+  overflow-x: auto; overflow-y: hidden;
+  padding-inline: max(var(--container), 4vw);
+  scrollbar-width: thin;
+  /* Sin scroll-snap a propósito: el imán se peleaba con el salto a cada
+     sección (aterrizaba ~120 px desviado, dejando la marca fuera de campo) y
+     un carrete de 58 fotos se recorre mejor libre que a tirones. */
+}
+.carrete__pista:focus-visible { outline: none; }
+
+/* Sin parallax: las fotos van alineadas y grandes, que es lo que se pidió.
+   El alto lo manda la pista y el ancho sale de la proporción real (--ar),
+   con un tope para que una panorámica no ocupe tres pantallas. */
+.carrete__foto {
+  flex: none; margin: 0; position: relative;
+  height: min(74svh, 78vw / var(--ar, 1));
   border-radius: var(--r-med); overflow: hidden;
-  background: var(--carbon-2); border: 1px solid var(--line);
-  align-self: center;
-  transform: translate3d(var(--px, 0), var(--y, 0), 0) scale(var(--ps, 1));
-  opacity: var(--pe, 1);
-  will-change: transform;
+  border: 1px solid var(--line); background: var(--carbon-2);
 }
-.foto img { display: block; height: 100%; width: auto; max-width: none; }
+/* aspect-ratio a partir de --ar, y no solo width:auto: sin él la imagen no
+   ocupa nada hasta que carga, la tira entera colapsa y los atajos saltan a
+   posiciones que ya no existen cuando las fotos aparecen. */
+.carrete__foto img {
+  display: block; height: 100%; width: auto; max-width: none;
+  aspect-ratio: var(--ar, 1);
+}
 
-/* Cinco tamaños con mucho recorrido entre el menor y el mayor: es la
-   diferencia entre una tira de fotos y un mural. El desplazamiento vertical
-   (--y, en svh) lo reparte el generador, y nunca pasa de (46 − alto/2): por
-   eso las pequeñas se van a los extremos y las grandes se quedan cerca del
-   centro sin salirse nunca del pin. */
-/* El tercer término del min() es el que limita la ANCHURA: --ar es la
-   proporción real de cada imagen, así que 90vw/--ar es la altura a la que
-   esa foto mediría 90vw de ancho. Sin él, una foto apaisada de las grandes
-   se salía de la pantalla en móvil (421 px de ancho en un móvil de 390). */
-.foto--xs  { height: min(20svh, 30vw, calc(90vw / var(--ar, 1))); }
-.foto--pq  { height: min(32svh, 42vw, calc(90vw / var(--ar, 1))); }
-.foto--med { height: min(46svh, 56vw, calc(90vw / var(--ar, 1))); }
-.foto--gr  { height: min(62svh, 72vw, calc(90vw / var(--ar, 1))); }
-.foto--xl  { height: min(76svh, 88vw, calc(90vw / var(--ar, 1))); }
-
-/* Aire extra a la izquierda de algunas fotos: los huecos irregulares son lo
-   que rompe el ritmo de tira y crea grupos y respiros. */
-.foto { margin-inline-start: var(--sep, 0); }
-
-/* El pie aparece al pasar la foto por el centro y se va al salir: la
-   opacidad la escribe app.js en --cap a partir de esa distancia. */
-.foto__pie {
+/* El pie crece y se planta abajo al centro. Arranca grande y desplazado
+   hacia el medio de la foto y acaba asentado en la banda inferior: es el
+   gesto que pidió el cliente para destacar a quién sale. */
+.carrete__foto figcaption {
   position: absolute; left: 0; right: 0; bottom: 0;
-  padding: 2.2rem var(--pad-mini) var(--pad-mini);
-  font-size: var(--t-eyebrow); letter-spacing: 0.1em;
-  color: var(--marfil); text-transform: uppercase;
-  background: linear-gradient(to top, color-mix(in oklab, var(--carbon) 88%, transparent), transparent);
-  opacity: var(--cap, 0); transition: opacity 0.45s var(--ease);
+  padding: 3.5rem 1rem 1.1rem;
+  text-align: center; color: var(--marfil);
+  font-family: var(--ff-display); font-size: var(--t-h4); line-height: 1.15;
+  background: linear-gradient(to top, color-mix(in oklab, var(--carbon) 92%, transparent) 35%, transparent);
+  opacity: 0; transform: translateY(1.2rem) scale(0.92);
+  transition: opacity 0.35s var(--ease), transform 0.45s var(--ease);
   pointer-events: none;
+}
+.carrete__foto:hover figcaption { animation: pie-entra 0.75s var(--ease) forwards; }
+@keyframes pie-entra {
+  0%   { opacity: 0; transform: translateY(-32%) scale(1.45); }
+  45%  { opacity: 1; transform: translateY(-24%) scale(1.32); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Marca de sección: separa los bloques dentro del carrete y es el destino
+   al que salta cada atajo. */
+.carrete__marca {
+  flex: none; align-self: stretch; display: grid; place-items: center;
+  padding-inline: clamp(1rem, 3vw, 3rem);
+  border-left: 1px solid var(--line);
+}
+.carrete__marca:first-child { border-left: 0; }
+.carrete__marca span {
+  font-family: var(--ff-display); font-size: var(--t-h3);
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  color: var(--cobre); letter-spacing: 0.05em; white-space: nowrap;
+}
+
+.carrete__ayuda {
+  text-align: center; padding: var(--pad-mini);
+  font-size: var(--t-eyebrow); text-transform: uppercase;
+  letter-spacing: 0.18em; color: var(--fg-dim);
+}
+
+/* Sin hover (táctil) el pie no se puede disparar al pasar: se deja puesto. */
+@media (hover: none) {
+  .carrete__foto figcaption { opacity: 1; transform: none; font-size: var(--t-small); }
 }
 
 /* ---------- Fechas ---------- */
@@ -638,7 +761,6 @@ a.card:hover .card__cta::after { width: 2.6rem; }
      ancho y no se veía nada. */
   .foto--xs  { height: min(28svh, 38vw, calc(90vw / var(--ar, 1))); }
   .foto--pq  { height: min(38svh, 50vw, calc(90vw / var(--ar, 1))); }
-  .foto--med { height: min(50svh, 64vw, calc(90vw / var(--ar, 1))); }
   .foto--gr  { height: min(62svh, 78vw, calc(90vw / var(--ar, 1))); }
   .foto--xl  { height: min(74svh, 92vw, calc(90vw / var(--ar, 1))); }
   /* En una columna, cerrar de lado a lado se lee como un temblor. */
@@ -676,10 +798,9 @@ a.card:hover .card__cta::after { width: 2.6rem; }
   .horiz__sticky { position: static; height: auto; }
   .horiz__track { overflow-x: auto; transform: none !important; }
   .nota-fly { display: none; }
-  .card, .foto { transform: none !important; opacity: 1 !important; }
+  .card { transform: none !important; opacity: 1 !important; }
   /* Sin solape ni pin, el margen negativo se comería la sección anterior. */
   [data-sube] { margin-top: 0; }
-  .foto__pie { opacity: 1 !important; }
   [data-cierre] { transform: none !important; }
   .horiz__fondo { display: none; }
 }
