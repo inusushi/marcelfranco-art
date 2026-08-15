@@ -244,12 +244,62 @@
     </div>
   </section>
 
+  <!-- ══════════ MÚSICA ══════════ -->
+  <!-- data-sube: entra desde abajo tapando la última banda de la galería,
+       igual que las bandas entre sí. Cierra la secuencia. -->
+  <section class="s container" id="musica" data-sube style="--capa: 6">
+    <div class="theme-marker" data-theme-set="noche"></div>
+    <p class="eyebrow" data-reveal>Música</p>
+    <h2 class="h2" data-split style="margin: 2rem 0 4rem; max-width: 16ch;">Amanecer</h2>
+
+    <!-- Las dos columnas entran desde los lados y se cierran en el centro
+         conforme entra la sección. El desplazamiento lo calcula app.js
+         (initCierre) a partir del scroll, no es una animación de duración
+         fija: así el movimiento va pegado al dedo o a la rueda. -->
+    <div class="split split--cierre">
+      <div class="stack stack--sm" data-cierre="izq">
+        <p class="body-lg dim" data-reveal>
+          Primer sencillo como solista. Escúchalo aquí o en tu plataforma preferida.
+        </p>
+        <div class="player" data-reveal>
+          <iframe
+            src="https://open.spotify.com/embed/track/4KC1LB27gcx2NXymDn6vZY?utm_source=generator&theme=0"
+            title="Amanecer — Marcel Franco en Spotify"
+            loading="lazy" allow="clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+        </div>
+        <div class="plats" data-reveal>
+          <a class="plat" href="https://open.spotify.com/track/4KC1LB27gcx2NXymDn6vZY" target="_blank" rel="noopener">Spotify</a>
+          <a class="plat" href="https://music.apple.com/mx/album/amanecer/1734010195?i=1734010198" target="_blank" rel="noopener">Apple Music</a>
+          <a class="plat" href="https://music.youtube.com/playlist?list=OLAK5uy_ldH-tlMjECNpncw8pDMlci5GYdM8mE-WI&amp;si=RAIScPCc1gSR8iZ4" target="_blank" rel="noopener">YouTube Music</a>
+          <a class="plat" href="https://open.spotify.com/playlist/6IhIejzimCJKFJRkDBhgsC" target="_blank" rel="noopener">Más música</a>
+        </div>
+      </div>
+
+      <div class="stack stack--sm" data-cierre="der">
+        <div class="video-wrap" data-reveal>
+          <iframe src="https://www.youtube-nocookie.com/embed/qgDNzkAd-3k"
+                  title="Video de Marcel Franco" loading="lazy"
+                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+        </div>
+        <p class="dim" data-reveal style="font-size: var(--t-small);">
+          Todo el catálogo, incluido el trabajo con El Cuarto de Dante,
+          está disponible en las plataformas.
+        </p>
+      </div>
+    </div>
+  </section>
+
   <!-- ══════════ GALERÍA ══════════ -->
   <!-- Una pantalla en vez de las tres bandas fijadas de antes: el carrete
        entero vive en una capa aparte que se abre al pulsar una sección, así
        las 58 fotos ya no cuestan 18 pantallas de scroll para llegar a la
-       venta. -->
-  <section class="s container galeria" id="galeria" data-sube style="--capa: 3">
+       venta.
+
+       SIN data-sube: esta sección mide una pantalla escasa, y el margen
+       negativo de la siguiente se la comía entera (el 104%, medido). El
+       solape solo vale entre secciones altas y fijadas. -->
+  <section class="s container galeria" id="galeria">
     <div class="theme-marker" data-theme-set="noche"></div>
     <p class="eyebrow" data-reveal>Galería</p>
     <h2 class="h2" data-split style="margin: 2rem 0 1rem; max-width: 16ch;">Dónde ha estado</h2>
@@ -300,65 +350,17 @@
   <!-- Capa del carrete. Vive fuera de <main> para que, al abrirse, no herede
        el apilado ni los transform de las secciones. -->
 
-  <!-- ══════════ MÚSICA ══════════ -->
-  <!-- data-sube: entra desde abajo tapando la última banda de la galería,
-       igual que las bandas entre sí. Cierra la secuencia. -->
-  <section class="s container" id="musica" data-sube style="--capa: 6">
-    <div class="theme-marker" data-theme-set="noche"></div>
-    <p class="eyebrow" data-reveal>Música</p>
-    <h2 class="h2" data-split style="margin: 2rem 0 4rem; max-width: 16ch;">Amanecer</h2>
-
-    <!-- Las dos columnas entran desde los lados y se cierran en el centro
-         conforme entra la sección. El desplazamiento lo calcula app.js
-         (initCierre) a partir del scroll, no es una animación de duración
-         fija: así el movimiento va pegado al dedo o a la rueda. -->
-    <div class="split split--cierre">
-      <div class="stack stack--sm" data-cierre="izq">
-        <p class="body-lg dim" data-reveal>
-          Primer sencillo como solista. Escúchalo aquí o en tu plataforma preferida.
-        </p>
-        <div class="player" data-reveal>
-          <iframe
-            src="https://open.spotify.com/embed/track/4KC1LB27gcx2NXymDn6vZY?utm_source=generator&theme=0"
-            title="Amanecer — Marcel Franco en Spotify"
-            loading="lazy" allow="clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-        </div>
-        <div class="plats" data-reveal>
-          <a class="plat" href="https://open.spotify.com/track/4KC1LB27gcx2NXymDn6vZY" target="_blank" rel="noopener">Spotify</a>
-          <a class="plat" href="https://music.apple.com/mx/album/amanecer/1734010195?i=1734010198" target="_blank" rel="noopener">Apple Music</a>
-          <a class="plat" href="https://music.youtube.com/playlist?list=OLAK5uy_ldH-tlMjECNpncw8pDMlci5GYdM8mE-WI&amp;si=RAIScPCc1gSR8iZ4" target="_blank" rel="noopener">YouTube Music</a>
-          <a class="plat" href="https://open.spotify.com/playlist/6IhIejzimCJKFJRkDBhgsC" target="_blank" rel="noopener">Más música</a>
-        </div>
-      </div>
-
-      <div class="stack stack--sm" data-cierre="der">
-        <div class="video-wrap" data-reveal>
-          <iframe src="https://www.youtube-nocookie.com/embed/qgDNzkAd-3k"
-                  title="Video de Marcel Franco" loading="lazy"
-                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen></iframe>
-        </div>
-        <p class="dim" data-reveal style="font-size: var(--t-small);">
-          Todo el catálogo, incluido el trabajo con El Cuarto de Dante,
-          está disponible en las plataformas.
-        </p>
-      </div>
-    </div>
-  </section>
-
   <!-- ══════════ PRODUCCIÓN MUSICAL ══════════ -->
   <section class="s container produccion" id="produccion">
     <div class="theme-marker" data-theme-set="noche"></div>
 
-    <!-- Video de fondo. Mismo montaje que el hero: poster como <img> y las
-         fuentes las engancha app.js, para no bajar los megas con movimiento
-         reducido. El velo de encima no es decorativo: sin él, el texto y los
-         precios se pierden sobre la imagen en movimiento. -->
+    <!-- Video de fondo, SIN velo encima: se ve tal cual, como el original.
+         La legibilidad se resuelve en las piezas, no oscureciendo el video:
+         las tarjetas son opacas y el texto lleva sombra. -->
     <div class="produccion__media" aria-hidden="true">
       <img src="media/composicion-poster.webp" alt="" loading="lazy" width="1024" height="528">
       <video class="produccion__video" muted loop playsinline
              data-webm="media/composicion.webm" data-mp4="media/composicion.mp4"></video>
-      <span class="produccion__velo"></span>
     </div>
 
     <p class="eyebrow" data-reveal>Producción musical</p>

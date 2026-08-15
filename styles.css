@@ -385,28 +385,31 @@ a.card:hover .card__cta::after { width: 2.6rem; }
 .produccion__video { opacity: 0; transition: opacity 0.8s var(--ease); }
 .produccion__video.is-playing { opacity: 1; }
 
-/* Dos capas de velo: una opaca general y un degradado más denso abajo, donde
-   están las tarjetas. Sin esto el precio no se lee sobre la imagen en
-   movimiento; con la guitarra clara del video, el contraste caía por debajo
-   de lo legible justo en las cifras. */
-.produccion__velo {
-  position: absolute; inset: 0;
-  background:
-    linear-gradient(to bottom, color-mix(in oklab, var(--carbon) 72%, transparent), color-mix(in oklab, var(--carbon) 92%, transparent) 60%),
-    color-mix(in oklab, var(--carbon) 40%, transparent);
-}
+/* El video va limpio, sin velo: se quiere ver como el original. La
+   legibilidad se resuelve en las piezas de encima, no oscureciendo la imagen.
 
-/* Las tarjetas dejan de ser transparentes: sobre el video se perdían. */
+   Las tarjetas son OPACAS del todo, sin translucidez ni desenfoque: sobre un
+   fondo en movimiento, cualquier transparencia hace bailar el precio. */
 .produccion .plan {
-  background: color-mix(in oklab, var(--carbon-2) 88%, transparent);
-  backdrop-filter: blur(10px);
-  border-color: color-mix(in oklab, var(--cobre) 28%, var(--line));
-  box-shadow: 0 1.5rem 3rem color-mix(in oklab, #000 45%, transparent);
+  background: var(--carbon-2);
+  border-color: color-mix(in oklab, var(--cobre) 30%, var(--line));
+  box-shadow: 0 1.5rem 3.5rem color-mix(in oklab, #000 62%, transparent);
 }
 .produccion .plan--destacado {
   border-color: var(--cobre);
-  box-shadow: 0 1.5rem 3rem color-mix(in oklab, #000 55%, transparent),
+  box-shadow: 0 1.5rem 3.5rem color-mix(in oklab, #000 70%, transparent),
               0 0 0 1px color-mix(in oklab, var(--cobre) 45%, transparent);
+}
+
+/* El texto suelto sí queda sobre el video: la sombra es lo que lo despega
+   cuando por detrás pasa la guitarra clara. */
+.produccion .eyebrow,
+.produccion .h2,
+.produccion > .body-lg,
+.produccion .stack .eyebrow,
+.produccion .stack .plan__lista {
+  text-shadow: 0 2px 12px color-mix(in oklab, #000 85%, transparent),
+               0 1px 3px color-mix(in oklab, #000 70%, transparent);
 }
 
 /* ---------- Desbloqueo del libro ---------- */

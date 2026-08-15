@@ -88,7 +88,14 @@ muy lejos. Ahora hay dos piezas:
    una sección, pero dentro se recorre entero: las secciones son puntos de
    entrada, no compartimentos. Los atajos de arriba saltan a cada una.
 
-La página pasó de 26 pantallas a 11.
+La página pasó de 26 pantallas a 12. La galería va **justo encima de
+Producción**, que es donde entra la venta.
+
+- **La galería NO lleva `data-sube`.** El solape solo vale entre secciones
+  altas y fijadas: cuando la galería pasó de tres bandas de 18 pantallas a
+  una sección de 692 px, el margen negativo de la sección siguiente se la
+  comió entera —el 104%, medido— y desaparecía de la página. Si alguna vez se
+  le vuelve a poner, hay que darle antes una pantalla de altura de sobra.
 
 - **Las fotos salen de las subcarpetas de `Galeria marcel/`** y el orden de
   las secciones está fijado en el script de generación (`ORDEN`). Para añadir
@@ -120,10 +127,12 @@ El de la sección de composición va de fondo, en bucle y sin audio, con el
 mismo montaje que el hero: poster como `<img>` y las fuentes enganchadas
 desde `app.js`, para no bajar los megas con movimiento reducido.
 
-**Las tarjetas de precio dejaron de ser transparentes y el texto ensanchó a
-76ch.** Sobre un video en movimiento, una tarjeta translúcida y un párrafo a
-60ch se perdían; el velo de dos capas y el fondo opaco de las tarjetas son lo
-que mantiene legibles las cifras.
+**El video va sin velo encima, a propósito**: se quiere ver como el original.
+La legibilidad se resuelve en las piezas de encima, no oscureciendo la imagen:
+las tarjetas son **opacas del todo** —sin translucidez ni desenfoque, porque
+sobre un fondo en movimiento cualquier transparencia hace bailar el precio— y
+el texto suelto lleva sombra para despegarse cuando por detrás pasa la
+guitarra clara. El párrafo va a 76ch en vez de 60ch.
 
 ## Decisiones que no hay que deshacer
 
