@@ -538,17 +538,29 @@ a.card:hover .card__cta::after { width: 2.6rem; }
   display: flex; justify-content: center; align-items: flex-start;
   gap: clamp(0.4rem, 1.2vw, 1.2rem); flex-wrap: wrap;
   padding-top: 2rem;
+  /* Perspectiva compartida: sin esto cada tarjeta gira sobre su propio
+     centro con una fuga de cámara distinta y el abanico se ve descosido. */
+  perspective: 1600px;
 }
 .abanico__carta {
   flex: 0 0 auto; width: clamp(9rem, 14vw, 13rem);
   background: none; border: 0; padding: 0; cursor: pointer;
   color: inherit; font: inherit; text-align: center;
   display: grid; gap: 0.75rem; justify-items: center;
-  transform: rotate(var(--ang)) translateY(var(--baja));
-  transition: transform 0.5s var(--ease);
+  /* --rx/--ry: inclinación que sigue al cursor (app.js, initAbanicoTilt).
+     --tz: se eleva hacia la cámara solo en hover/focus, más abajo. */
+  transform:
+    rotate(var(--ang)) translateY(var(--baja))
+    rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg))
+    translateZ(var(--tz, 0px));
+  transition: transform 0.4s var(--ease);
 }
 .abanico__carta:hover, .abanico__carta:focus-visible {
-  transform: rotate(0deg) translateY(calc(var(--baja) - 1.2rem));
+  --tz: 2.2rem;
+  transform:
+    rotate(0deg) translateY(calc(var(--baja) - 1.2rem))
+    rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg))
+    translateZ(var(--tz, 0px));
   outline: none;
 }
 .abanico__foto {
@@ -556,10 +568,20 @@ a.card:hover .card__cta::after { width: 2.6rem; }
   border-radius: var(--r-med); border: 1px solid var(--line);
   background: var(--carbon-2);
   box-shadow: 0 1rem 2.5rem color-mix(in oklab, #000 45%, transparent);
+  transition: box-shadow 0.4s var(--ease);
+}
+.abanico__carta:hover .abanico__foto, .abanico__carta:focus-visible .abanico__foto {
+  box-shadow: 0 2.5rem 4rem color-mix(in oklab, #000 55%, transparent);
 }
 .abanico__foto img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease); }
 .abanico__carta:hover .abanico__foto img { transform: scale(1.06); }
 .abanico__carta:focus-visible .abanico__foto { outline: 2px solid var(--cobre); outline-offset: 3px; }
+
+/* Sin puntero fino no hay --rx/--ry que seguir: el tilt no aplica y se
+   evita dejar la variable a medio actualizar en táctil. */
+@media (hover: none), (pointer: coarse) {
+  .abanico__carta { --rx: 0deg; --ry: 0deg; }
+}
 
 /* El nombre va FUERA de la tarjeta, debajo, no encima de la foto. */
 .abanico__nombre { font-family: var(--ff-display); font-size: var(--t-h4); line-height: 1.1; }

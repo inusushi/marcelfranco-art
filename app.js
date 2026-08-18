@@ -440,6 +440,37 @@
     }, { passive: true });
   }
 
+  /* Inclinación 3D del abanico: cada tarjeta gira sobre X/Y siguiendo la
+     posición del cursor dentro de ella (rotateX/rotateY + perspective en
+     el contenedor, styles.css). Nada de librerías: son dos grados que se
+     escriben como custom properties y transiciona el propio CSS.
+     Se apaga con movimiento reducido y en táctil (ahí "hover" no
+     significa nada y --rx/--ry se quedarían pegadas donde tocó el dedo). */
+  function initAbanicoTilt() {
+    if (reduce) return;
+    if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    var cartas = [].slice.call(document.querySelectorAll('.abanico__carta'));
+    if (!cartas.length) return;
+
+    var MAX = 9; /* grados máximos de inclinación por eje */
+
+    cartas.forEach(function (carta) {
+      carta.addEventListener('pointermove', function (e) {
+        var r = carta.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width;
+        var py = (e.clientY - r.top) / r.height;
+        var ry = (px - 0.5) * MAX * 2;   /* eje X del cursor → rotateY */
+        var rx = (0.5 - py) * MAX * 2;   /* eje Y del cursor → rotateX, invertido */
+        carta.style.setProperty('--rx', rx.toFixed(2) + 'deg');
+        carta.style.setProperty('--ry', ry.toFixed(2) + 'deg');
+      });
+      carta.addEventListener('pointerleave', function () {
+        carta.style.setProperty('--rx', '0deg');
+        carta.style.setProperty('--ry', '0deg');
+      });
+    });
+  }
+
   /* Video de fondo de Producción. Mismo trato que el del hero: las fuentes
      se enganchan aquí para no descargarlas con movimiento reducido. */
   function initVideoFondo() {
@@ -770,6 +801,7 @@
     initLibro();
     initNotas();
     initCarrete();
+    initAbanicoTilt();
 
     /* Los dos videos son decoración: entran cuando ya está todo lo demás. */
     cuandoSobreTiempo(function () { initHeroVideo(); initVideoFondo(); });
