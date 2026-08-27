@@ -121,18 +121,16 @@ Producción**, que es donde entra la venta.
   calculado el estado inicial, y un rAF puede tardar o no llegar si la
   pestaña no está componiendo.
 
-## El video de Producción
+## El video que estuvo en Producción
 
-El de la sección de composición va de fondo, en bucle y sin audio, con el
-mismo montaje que el hero: poster como `<img>` y las fuentes enganchadas
-desde `app.js`, para no bajar los megas con movimiento reducido.
+**Retirado el 15/08/2026.** La sección de composición llevaba un video de
+fondo; se quitó a petición de Marcel y ahora ese bloque va con fondo morado
+liso. Los archivos `media/composicion.*` siguen en el repo por si vuelve.
 
-**El video va sin velo encima, a propósito**: se quiere ver como el original.
-La legibilidad se resuelve en las piezas de encima, no oscureciendo la imagen:
-las tarjetas son **opacas del todo** —sin translucidez ni desenfoque, porque
-sobre un fondo en movimiento cualquier transparencia hace bailar el precio— y
-el texto suelto lleva sombra para despegarse cuando por detrás pasa la
-guitarra clara. El párrafo va a 76ch en vez de 60ch.
+Si vuelve a ponerse, dos cosas que costó aprender: el video **no** lleva velo
+encima —se quiere ver como el original— y por eso las tarjetas de precio
+tienen que ser **opacas del todo**, sin translucidez ni desenfoque: sobre un
+fondo en movimiento cualquier transparencia hace bailar la cifra.
 
 ## SEO y rendimiento
 
