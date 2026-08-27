@@ -54,7 +54,56 @@
   --surface: var(--carbon-2);
 }
 
-/* Tema alterno: bloques en burgundy (contrataciones) */
+/* ---------- Temas por sección ----------
+   Cada bloque tiene su color y el texto se recalcula con él. Los contrastes
+   están medidos, no elegidos a ojo; el mínimo exigible es 4,5:1 y ninguno
+   baja de 5,5:1. Si se cambia un fondo, hay que volver a medir: es
+   exactamente el error que traía el burgundy original (1,53:1).
+
+   El acento (--cobre) se redefine en el tema claro porque el cobre de marca
+   sobre blanco da 3,22:1 y no llega. Es el mismo tono, más oscuro. */
+
+/* Contrataciones — rojo · texto 6,79:1 · secundario 5,88:1 · acento 5,86:1 */
+html[data-theme="rojo"] {
+  --bg: #8E1B1F;
+  --fg: var(--marfil);
+  --fg-dim: #EBC9C4;
+  --cobre: #F0C9A8;
+  --line: #B04A44;
+  --surface: #7A1418;
+}
+
+/* Producción — morado · 12,96:1 · 7,48:1 · 6,26:1 */
+html[data-theme="morado"] {
+  --bg: #221338;
+  --fg: var(--marfil);
+  --fg-dim: #B3A6BE;
+  --cobre: #C98F6A;
+  --line: #45305C;
+  --surface: #2C1A47;
+}
+
+/* Clases — negro · 15,79:1 · 5,94:1 · 5,89:1 */
+html[data-theme="negro"] {
+  --bg: #000000;
+  --fg: var(--marfil);
+  --fg-dim: #8E8783;
+  --line: #2A2624;
+  --surface: #0E0D0D;
+}
+
+/* El libro — blanco · 16,45:1 · 6,31:1 · 5,59:1 */
+html[data-theme="blanco"] {
+  --bg: #F7F3EC;
+  --fg: #171515;
+  --fg-dim: #5F5853;
+  --cobre: #8A5433;
+  --line: #DDD5CC;
+  --surface: #FFFFFF;
+}
+
+/* Tema histórico, ya sin uso en la página. Se deja porque el motor lo admite
+   y puede volver a hacer falta. */
 html[data-theme="vino"] {
   --bg: var(--burgundy);
   --fg: var(--marfil);   /* 8.91:1 sobre burgundy */
@@ -131,6 +180,24 @@ input, textarea, select, button { font: inherit; color: inherit; }
 
 .container { padding-inline: max(var(--container), 5vw); }
 .s { position: relative; padding-block: var(--pad-xl); }
+
+/* ---------- Fondo con profundidad por sección ----------
+   Un halo grande y muy suave que se arrastra más despacio que el scroll:
+   --py lo escribe app.js. No es un adorno gratuito, es lo que hace que cada
+   bloque de color se lea como un espacio propio y no como una franja lisa.
+   Se pinta en un pseudoelemento para no meter un <div> en cinco secciones. */
+[data-fondo] { overflow: hidden; isolation: isolate; }
+[data-fondo]::before {
+  content: ""; position: absolute; z-index: -1;
+  left: -10%; right: -10%; top: -35%; bottom: -35%;
+  background:
+    radial-gradient(50% 42% at 22% 30%, color-mix(in oklab, var(--cobre) 16%, transparent), transparent 70%),
+    radial-gradient(46% 38% at 82% 72%, color-mix(in oklab, var(--surface) 85%, transparent), transparent 72%);
+  transform: translate3d(0, var(--py, 0), 0);
+  will-change: transform; pointer-events: none;
+}
+/* En el tema claro el mismo halo a esa intensidad ensucia el blanco. */
+html[data-theme="blanco"] [data-fondo]::before { opacity: 0.55; }
 .s--tight { padding-block: var(--pad-large); }
 
 /* ---------- Tipografía ---------- */
@@ -156,7 +223,15 @@ input, textarea, select, button { font: inherit; color: inherit; }
 .eyebrow::before { content: ""; width: 1.75rem; height: 1px; background: var(--cobre); flex: none; }
 
 /* ---------- Reveal por líneas ---------- */
-.line { display: block; position: relative; overflow: hidden; }
+/* El padding es lo que salva las colas de las letras. `overflow: hidden` es
+   imprescindible para el revelado, pero con `line-height: 1` en los titulares
+   la caja de línea queda más corta que la letra y recortaba la «g» de
+   «encargo». El margen negativo devuelve el espacio para que no cambie nada
+   de sitio. */
+.line {
+  display: block; position: relative; overflow: hidden;
+  padding-bottom: 0.16em; margin-bottom: -0.16em;
+}
 .line__in { display: block; clip-path: inset(0 100% 0 0); }
 .line__bar { position: absolute; inset: 0; background: var(--cobre); transform: scaleX(0); transform-origin: left center; }
 [data-split].is-revealed .line__in { animation: line-in var(--dur) var(--ease) forwards; animation-delay: calc(var(--i) * 0.07s + 0.18s); }
@@ -188,7 +263,10 @@ input, textarea, select, button { font: inherit; color: inherit; }
 .btn--ghost { background: transparent; color: var(--fg); border-color: var(--line); }
 .btn--ghost:hover { background: var(--fg); color: var(--bg); border-color: var(--fg); }
 .btn--cobre { background: transparent; color: var(--cobre); border-color: var(--cobre); }
-.btn--cobre:hover { background: var(--cobre); color: var(--carbon); }
+/* --bg y no --carbon: al pasar el ratón este botón se rellena de cobre, y con
+   el carbón fijo encima quedaba en 2,94:1 sobre el tema claro. Con --bg el
+   texto toma el color del fondo de la sección y funciona en los cinco temas. */
+.btn--cobre:hover { background: var(--cobre); color: var(--bg); }
 .btn__swap { position: relative; overflow: hidden; display: block; line-height: 1.25; }
 .btn__swap span { display: block; transition: transform 0.45s var(--ease); }
 .btn__swap span:last-child { position: absolute; inset: 0; transform: translateY(115%); }
@@ -278,10 +356,16 @@ input, textarea, select, button { font: inherit; color: inherit; }
 /* ---------- Trayectoria: scroll horizontal ---------- */
 .horiz { padding: 0; }
 .horiz__sticky { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; }
+/* El titular vive en la banda de arriba, fuera del recorrido de las tarjetas.
+   Estaba al 22% y el carril pasa justo por ahí: se le montaba encima a cada
+   tarjeta que iba entrando —a la de Bellas Artes le partía la cara— y no era
+   cosa de esa foto, sino de todas. El padding del carril reserva esa banda
+   para que ninguna tarjeta suba a ocuparla, midan lo que midan. */
 .horiz__head {
-  position: absolute; top: 22%; left: max(var(--container), 5vw); z-index: 2;
+  position: absolute; top: 4%; left: max(var(--container), 5vw); z-index: 2;
   pointer-events: none; display: grid; gap: 0.75rem;
 }
+.horiz__track { padding-top: 12svh; }
 /* La separación es mucho mayor que el --gap general: el parallax necesita
    sitio para que cada tarjeta se adelante o se retrase sin pisar a la vecina,
    y el aire entre piezas es parte de lo que hace que se lea como un mural. */
@@ -416,7 +500,9 @@ a.card:hover .card__cta::after { width: 2.6rem; }
 .unlock {
   margin-top: var(--pad-small); padding: var(--pad-small);
   border: 1px solid var(--line); border-radius: var(--r-med);
-  background: color-mix(in oklab, var(--carbon-2) 60%, transparent);
+  /* Sigue al tema: el desbloqueo vive en la sección blanca y con el oscuro
+     fijo quedaba un panel negro con el texto negro encima. */
+  background: color-mix(in oklab, var(--surface) 60%, transparent);
   display: grid; gap: var(--pad-mini);
 }
 .unlock__titulo { font-family: var(--ff-display); font-size: var(--t-h4); }
@@ -433,7 +519,7 @@ a.card:hover .card__cta::after { width: 2.6rem; }
 .unlock__msg { font-size: var(--t-small); color: var(--fg-dim); min-height: 1.2em; }
 .unlock.is-open .unlock__msg { color: var(--cobre); }
 .unlock.is-wrong { animation: unlock-no 0.4s var(--ease); }
-.unlock.is-wrong .unlock__msg { color: var(--marfil); }
+.unlock.is-wrong .unlock__msg { color: var(--fg); }
 @keyframes unlock-no {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-6px); }
@@ -465,7 +551,9 @@ a.card:hover .card__cta::after { width: 2.6rem; }
 
 .stack { display: grid; gap: var(--pad-med); align-content: start; }
 .stack--sm { gap: var(--pad-small); }
-.frame { border-radius: var(--r-med); overflow: hidden; border: 1px solid var(--line); background: var(--carbon-2); }
+/* --surface y no --carbon-2: en la sección del libro, que va en blanco,
+   un marco oscuro dejaba una caja negra detrás de la portada. */
+.frame { border-radius: var(--r-med); overflow: hidden; border: 1px solid var(--line); background: var(--surface); }
 .frame img { width: 100%; height: 100%; object-fit: cover; }
 
 /* ---------- Música ---------- */

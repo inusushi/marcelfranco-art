@@ -160,6 +160,48 @@ guitarra clara. El párrafo va a 76ch en vez de 60ch.
   no ahorra nada. Hay un respaldo del historial previo en
   `%TEMP%\marcel-respaldo.bundle`.
 
+## Los colores por sección
+
+Cinco temas: `noche` (por defecto), `morado` (Producción), `negro` (Clases),
+`blanco` (El libro) y `rojo` (Contrataciones). El motor ya estaba —los
+marcadores `data-theme-set` cambian el fondo de toda la página al cruzar la
+línea del nav—, lo nuevo son los colores.
+
+- **Los contrastes están medidos, no elegidos a ojo.** Ninguno baja de 5,5:1
+  sobre el mínimo exigible de 4,5:1. Hay un barrido automático hecho sobre los
+  82 elementos de texto de esas cinco secciones y ninguno quedó por debajo. Si
+  se cambia un fondo, **hay que volver a medir**: es exactamente el error que
+  traía el burgundy original, con 1,53:1.
+- **El tema claro redefine `--cobre`.** El cobre de marca sobre blanco da
+  3,22:1 y no llega; en `blanco` se usa el mismo tono más oscuro (#8A5433,
+  5,59:1). Por eso el acento es una variable de tema y no un color fijo.
+- **Tres reglas llevaban el oscuro incrustado** y en la sección blanca dejaban
+  caja negra con texto negro encima: el fondo de `.frame`, el de `.unlock` y
+  el color de `.unlock.is-wrong .unlock__msg`. Ahora siguen a `--surface` y
+  `--fg`. Si se añade un componente nuevo, que use variables de tema y no
+  `--carbon-2` a pelo, o se romperá en El libro.
+- **`.btn--cobre:hover` usa `--bg`, no `--carbon`.** Al rellenarse de cobre con
+  el carbón fijo encima quedaba en 2,94:1 en el tema claro.
+- **El halo de fondo (`[data-fondo]::before`) se arrastra más despacio que el
+  scroll**; `--py` lo escribe `app.js`. En el tema claro va al 55% de opacidad
+  porque a plena intensidad ensucia el blanco.
+
+## El titular de Trayectoria
+
+Estaba al 22% de la altura y el carril de tarjetas pasa justo por ahí: se le
+montaba encima a **cada** tarjeta que entraba —a la de Bellas Artes le partía
+la cara— y no era cosa de esa foto. Ahora vive al 4%, en la banda de arriba, y
+`.horiz__track` reserva esa banda con `padding-top: 12svh` para que ninguna
+tarjeta suba a ocuparla midan lo que midan. Verificado en 11 posiciones del
+recorrido: cero choques.
+
+## Las colas de las letras
+
+`.line` lleva `padding-bottom: 0.16em` con un margen negativo que lo compensa.
+El revelado necesita `overflow: hidden`, pero con `line-height: 1` la caja de
+línea queda más corta que la letra y recortaba la «g» de «encargo». **No quitar
+ese padding.**
+
 ## Decisiones que no hay que deshacer
 
 - **El cambio de tema es instantáneo, sin desvanecido.** Está documentado en

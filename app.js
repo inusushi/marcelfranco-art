@@ -734,6 +734,26 @@
     };
   }
 
+  /* Halo de fondo de cada sección de color. Se arrastra más despacio que el
+     scroll, que es lo que da la sensación de profundidad. Devuelve la función
+     de actualización para el bucle de rAF. */
+  function initFondos() {
+    var zonas = [].slice.call(document.querySelectorAll('[data-fondo]'));
+    if (!zonas.length || reduce) return function () {};
+
+    var AMPLITUD = 90;   // píxeles de recorrido del halo, de punta a punta
+
+    return function () {
+      zonas.forEach(function (z) {
+        var r = z.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > innerHeight + 200) return;   // fuera de vista
+        /* -1 cuando la sección entra por abajo, +1 cuando sale por arriba. */
+        var p = (innerHeight - r.top) / (innerHeight + r.height) * 2 - 1;
+        z.style.setProperty('--py', (-p * AMPLITUD).toFixed(1) + 'px');
+      });
+    };
+  }
+
   /* Tema por scroll. Al final del documento el scroll se topa, así que un
      marcador de la última pantalla nunca cruzaría la línea del nav: estando
      abajo del todo vale cualquiera que ya esté visible. */
@@ -814,8 +834,12 @@
     var updateHoriz = initHorizontal();
     var updateTheme = initTheme();
     var updateCierre = initCierre();
+    var updateFondos = initFondos();
 
-    function refresh() { if (updateHoriz) updateHoriz(); updateTheme(); updateCierre(); }
+    function refresh() {
+      if (updateHoriz) updateHoriz();
+      updateTheme(); updateCierre(); updateFondos();
+    }
 
     /* No se puede colgar del evento 'scroll': Lenis no emite eventos scroll
        nativos y el pin y los temas se quedarían congelados. */
